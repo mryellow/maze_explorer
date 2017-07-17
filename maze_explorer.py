@@ -49,6 +49,13 @@ consts = {
             key.LEFT: 'left',
             key.RIGHT: 'right',
             key.UP: 'up',
+        },
+        "battery": {
+            "angular": 0.04,
+            "linear": 0.05
+        },
+        "reward": {
+            "explore": 1.0
         }
     },
     "view": {
@@ -200,6 +207,11 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         self.angular_velocity = world['angular_velocity']
         self.accel = world['accel']
         self.deaccel = world['deaccel']
+
+        self.battery_use = world['battery']
+        self.reward_explore = world['reward']['explore']
+        self.battery = 100
+        self.reward = 0
 
         self.bindings = world['bindings']
         buttons = {}
@@ -388,6 +400,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         buttons = self.buttons
         ma = buttons['right'] - buttons['left']
         if ma != 0:
+            self.battery -= self.battery_use['angular']
             self.player.rotation += ma * dt * self.angular_velocity
 
         a = math.radians(self.player.rotation)
@@ -401,6 +414,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
         mv = buttons['up']
         if mv != 0:
+            self.battery -= self.battery_use['linear']
             newVel += dt * mv * self.accel * self.impulse_dir
             nv = newVel.magnitude()
             if nv > self.topSpeed:
@@ -417,6 +431,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
         # Collision detected
         if self.bumped_x or self.bumped_y:
+            # TODO: Episode over?
             print("bumped", newVel, modVel, self.bumped_x, self.bumped_y)
 
         # Update position with new velocity
@@ -428,6 +443,8 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         self.player.update_center(newPos)
 
         self.update_visited(newPos)
+
+        print('battery', self.battery)
 
         # update collman
         #self.collman.clear()
@@ -466,6 +483,9 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
             if not cell.properties.get('visited') and cell.tile and cell.tile.id > 0:
                 cell.properties['visited'] = True
 
+                # Adjust next reward for exploration
+                self.reward += self.reward_explore
+
                 # Change colour of visited cells
                 key = layer.get_key_at_pixel(cell.x, cell.y)
                 #layer.set_cell_color(key[0], key[1], [155,155,155])
@@ -479,6 +499,8 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         for cell in neighbours:
             neighbour = neighbours[cell]
             set_visited(self.visit_layer, neighbour)
+
+        print('reward', self.reward)
 
     def open_gate(self):
         self.gate.color = Player.palette['gate']
@@ -507,6 +529,8 @@ def step():
         window.flip()
 
     # TODO: Return `reward, state` etc.
+    # reward = self.reward
+    # self.reward = 0
     # TODO: Trace `done`, setting terminal state elsewhere.
 
 def main(argv):
