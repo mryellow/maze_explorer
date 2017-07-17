@@ -533,55 +533,55 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
                 return
             depth -= 1
 
+            # TODO: Exit if outside window.
+
             m = math.tan(rad) # Slope
             sin = math.sin(rad)
             cos = math.cos(rad)
+            #print(sin, cos)
 
             boundary_x = self.map_layer.tw - (search_x % self.map_layer.tw)
             boundary_y = self.map_layer.th - (search_y % self.map_layer.th)
 
-            # top
-            if cos > 0 and False:
+            wedge = 45*(math.pi/180)
+            top = (cos > 0 and cos > wedge)
+            bottom = (cos < 0 and cos < -wedge)
+            left = (sin < 0 and cos < wedge and cos > -wedge)
+            right = (sin > 0 and cos < wedge and cos > -wedge)
+
+            if top:
                 boundary_y = search_y + boundary_y
 
-            # bottom
-            if cos < 0 and False:
+            if bottom:
                 boundary_y = search_y - boundary_y
 
             # Intersect with horizontal line
-            if cos > 0 or cos < 0:
-                print('boundary_y', search_x, boundary_y)
+            if top or bottom:
+                #print('boundary_y', search_x, boundary_y)
                 new_x = -m * (search_y - boundary_y) + search_x
-                #print('new_x', new_x)
                 start = search_x, search_y
                 end = new_x, boundary_y
 
-            # right
-            if sin > 0:
+            if right:
                 boundary_x = search_x + boundary_x
 
-            # left
-            if sin < 0:
+            if left:
                 boundary_x = search_x - boundary_x
 
-            if sin > 0 or sin < 0:
-                print('boundary_x', search_x, boundary_x)
+            if left or right:
+                #print('boundary_x', search_x, boundary_x)
                 new_y = ((boundary_x - search_x) / m) + search_y
-                #print('new_y', new_y)
                 start = search_x, search_y
                 end = boundary_x, new_y
 
-            if end:
-                print('line', start, end)
+            if top or bottom or left or right:
                 line = draw.Line(start, end, (155,155,155,155))
                 self.map_layer.add(line)
 
                 cell = self.map_layer.get_at_pixel(end[0], end[1])
-                if cell and cell.tile and cell.tile.id > 0:
-                    print('cell', cell.tile.id)
-                #else:
+                if not cell or not cell.tile or not cell.tile.id > 0:
                     # Recurse
-                    #search_grid(end[0]+1, end[1]+1, rad, depth)
+                    search_grid(end[0], end[1], rad, depth)
 
         # Start at `point`, check tile under each pixel
         search_grid(point.x, point.y, direction)
