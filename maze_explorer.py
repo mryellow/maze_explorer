@@ -15,6 +15,7 @@ from pyglet.gl import *
 
 import cocos
 from cocos.director import director
+from cocos import draw
 # TODO: Replace with straight up CircleShape
 import cocos.collision_model as cm
 import cocos.mapcolliders as mc
@@ -97,10 +98,14 @@ class Player(cocos.sprite.Sprite):
 
     def update_center(self, cshape_center):
         """cshape_center must be eu.Vector2"""
+        assert isinstance(cshape_center, eu.Vector2)
+
         self.position = world_to_view(cshape_center)
         self.cshape.center = cshape_center
 
     def calc_move(self, dt, vel):
+        assert isinstance(vel, eu.Vector2)
+
         old = self.cshape.center
         remaining_dt = dt
         new = old.copy()
@@ -178,7 +183,6 @@ class MessageLayer(cocos.layer.Layer):
 def reflection_y(a):
     assert isinstance(a, eu.Vector2)
     return eu.Vector2(a.x, -a.y)
-
 
 class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
@@ -427,17 +431,24 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         newRect = oldRect.copy()
         newRect.x, newRect.y = self.player.calc_move(dt, newVel)
 
-        modVel = self.collide_map(self.map_layer, oldRect, newRect, newVel.x, newVel.y)
+        # Debugging, Can I rotate Rects for collision?
+        #myOldRect = oldRect.copy()
+        #myOldRect.width = 200
+        #myOldRect.rotation = self.player.rotation + 90
+        #myNewRect = myOldRect.copy()
+        #myNewRect.x, myNewRect.y = self.player.calc_move(dt, newVel)
+        #print('myNewRect', myNewRect, myNewRect.rotation)
+        #myModVel = self.collide_map(self.map_layer, myOldRect, myNewRect, newVel.x, newVel.y)
+
+        # Update position with new velocity
+        newVel.x, newVel.y = self.collide_map(self.map_layer, oldRect, newRect, newVel.x, newVel.y)
+        newPos = self.player.cshape.center
+        newPos.x, newPos.y = newRect.center
 
         # Collision detected
         if self.bumped_x or self.bumped_y:
             # TODO: Episode over?
-            print("bumped", newVel, modVel, self.bumped_x, self.bumped_y)
-
-        # Update position with new velocity
-        newVel.x, newVel.y = modVel
-        newPos = self.player.cshape.center
-        newPos.x, newPos.y = newRect.center
+            print("bumped", newVel, self.bumped_x, self.bumped_y)
 
         self.player.vel = newVel
         self.player.update_center(newPos)
@@ -445,6 +456,13 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         self.update_visited(newPos)
 
         print('battery', self.battery)
+
+        a = math.radians(self.player.rotation)
+        disFor = self.distance_to_tile(newPos, a)
+        #disLeft = self.distance_to_tile(newPos, (math.pi/4)+a)
+        #disRight = self.distance_to_tile(newPos, -(math.pi/4)+a)
+        print('dis', disFor)
+
 
         # update collman
         #self.collman.clear()
@@ -478,6 +496,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
     #    self.toRemove.clear()
 
     def update_visited(self, pos):
+        assert isinstance(pos, eu.Vector2)
 
         def set_visited(layer, cell):
             if not cell.properties.get('visited') and cell.tile and cell.tile.id > 0:
@@ -501,6 +520,78 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
             set_visited(self.visit_layer, neighbour)
 
         print('reward', self.reward)
+
+    # Find line intersects next tile
+    def distance_to_tile(self, point, direction, length = 50):
+        assert isinstance(point, eu.Vector2)
+        assert isinstance(direction, int) or isinstance(direction, float)
+        assert isinstance(length, int) or isinstance(length, float)
+
+        # Given `point`, look for where inersects with next boundary (`y % 10`) in `direction`
+        def search_grid(search_x, search_y, rad, depth=5):
+            if depth == 0:
+                return
+            depth -= 1
+
+            m = math.tan(rad) # Slope
+            sin = math.sin(rad)
+            cos = math.cos(rad)
+
+            boundary_x = self.map_layer.tw - (search_x % self.map_layer.tw)
+            boundary_y = self.map_layer.th - (search_y % self.map_layer.th)
+
+            # top
+            if cos > 0 and False:
+                boundary_y = search_y + boundary_y
+
+            # bottom
+            if cos < 0 and False:
+                boundary_y = search_y - boundary_y
+
+            # Intersect with horizontal line
+            if cos > 0 or cos < 0:
+                print('boundary_y', search_x, boundary_y)
+                new_x = -m * (search_y - boundary_y) + search_x
+                #print('new_x', new_x)
+                start = search_x, search_y
+                end = new_x, boundary_y
+
+            # right
+            if sin > 0:
+                boundary_x = search_x + boundary_x
+
+            # left
+            if sin < 0:
+                boundary_x = search_x - boundary_x
+
+            if sin > 0 or sin < 0:
+                print('boundary_x', search_x, boundary_x)
+                new_y = ((boundary_x - search_x) / m) + search_y
+                #print('new_y', new_y)
+                start = search_x, search_y
+                end = boundary_x, new_y
+
+            if end:
+                print('line', start, end)
+                line = draw.Line(start, end, (155,155,155,155))
+                self.map_layer.add(line)
+
+                cell = self.map_layer.get_at_pixel(end[0], end[1])
+                if cell and cell.tile and cell.tile.id > 0:
+                    print('cell', cell.tile.id)
+                #else:
+                    # Recurse
+                    #search_grid(end[0]+1, end[1]+1, rad, depth)
+
+        # Start at `point`, check tile under each pixel
+        search_grid(point.x, point.y, direction)
+
+        #x = point.x
+        #y = point.y
+        #d = math.sqrt(math.pow(2, x - x1) + math.pow(2, y - y1))
+        #print('d', d)
+
+        return 0
 
     def open_gate(self):
         self.gate.color = Player.palette['gate']
