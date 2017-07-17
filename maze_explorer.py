@@ -295,13 +295,27 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         pics = self.pics
         z = 0
 
-        # add map
+        # add walls
         self.map_layer = ti.load('test.tmx')['map0']
         self.map_layer.set_view(0, 0, self.map_layer.px_width, self.map_layer.px_height)
-        #self.map_layer.set_view(0, 0, 500, 500)
+        # FIXME: Separate `scale_x` and `scale_y`
         self.map_layer.scale = scale_x
         self.add(self.map_layer, z=z)
         z += 1
+
+        # add floor
+        self.visit_layer = ti.load('ones.tmx')['map0']
+        for i in xrange(0, len(self.map_layer.cells)):
+            for j in xrange(0, len(self.map_layer.cells[i])):
+                col = self.map_layer.cells[i][j]
+                # If wall exists, remove floor
+                if col.tile and col.tile.id > 0:
+                    self.visit_layer.cells[i][j].tile = None
+
+        self.visit_layer.set_view(0, 0, self.visit_layer.px_width, self.visit_layer.px_height)
+        # FIXME: Separate `scale_x` and `scale_y`
+        self.visit_layer.scale = scale_x
+        self.add(self.visit_layer, z=-1)
 
         # add player
         cx, cy = (0.5 * width, 0.5 * height)
@@ -413,25 +427,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         self.player.vel = newVel
         self.player.update_center(newPos)
 
-        # Get the current tile under player
-        atCell = self.map_layer.get_at_pixel(newPos.x, newPos.y)
-        #print('atCell', atCell, atCell.properties)
-        atCell.properties['visited'] = True
-
-        neighborCells = self.map_layer.get_neighbors(atCell)
-        #print('neighborCells', neighborCells)
-        for cell in neighborCells:
-            #print('cell', cell, neighborCells[cell], neighborCells[cell].properties)
-            if not neighborCells[cell].properties['visited']:
-                print('First visit', neighborCells[cell])
-            
-            neighborCells[cell].properties['visited'] = True
-
-            #atKey = self.map_layer.get_key_at_pixel(neighborCells[cell].x, neighborCells[cell].y)
-            #print('atKey', atKey)
-
-        #atRegion = self.map_layer.get_in_region(newRect.left, newRect.bottom, newRect.right, newRect.top)
-        #print('atRegion', atRegion)
+        self.update_visited(newPos)
 
         # update collman
         #self.collman.clear()
@@ -463,6 +459,26 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
     #    for node in self.toRemove:
     #        self.remove(node)
     #    self.toRemove.clear()
+
+    def update_visited(self, pos):
+
+        def set_visited(layer, cell):
+            if not cell.properties.get('visited') and cell.tile and cell.tile.id > 0:
+                cell.properties['visited'] = True
+
+                # Change colour of visited cells
+                key = layer.get_key_at_pixel(cell.x, cell.y)
+                #layer.set_cell_color(key[0], key[1], [155,155,155])
+                layer.set_cell_opacity(key[0], key[1], 255*0.8)
+
+        # Get the current tile under player
+        current = self.visit_layer.get_at_pixel(pos.x, pos.y)
+        set_visited(self.visit_layer, current)
+
+        neighbours = self.visit_layer.get_neighbors(current)
+        for cell in neighbours:
+            neighbour = neighbours[cell]
+            set_visited(self.visit_layer, neighbour)
 
     def open_gate(self):
         self.gate.color = Player.palette['gate']
@@ -499,15 +515,19 @@ def main(argv):
     director.init(**consts['window'])
     #pyglet.font.add_directory('.') # adjust as necessary if font included
     scene = cocos.scene.Scene()
+    z = 0
 
     palette = consts['view']['palette']
     Player.palette = palette
-    #r, g, b = palette['bg']
-    #scene.add(cocos.layer.ColorLayer(r, g, b, 255), z=-1)
+    r, g, b = palette['bg']
+    scene.add(cocos.layer.ColorLayer(r, g, b, 255), z=z)
+    z += 1
     message_layer = MessageLayer()
-    scene.add(message_layer, z=1)
+    scene.add(message_layer, z=z)
+    z += 1
     world_layer = WorldLayer(fn_show_message=message_layer.show_message)
-    scene.add(world_layer, z=0)
+    scene.add(world_layer, z=z)
+    z += 1
 
     if '-s' in argv or '--step' in argv:
         print('Waiting for step...')
