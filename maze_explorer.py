@@ -413,6 +413,26 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         self.player.vel = newVel
         self.player.update_center(newPos)
 
+        # Get the current tile under player
+        atCell = self.map_layer.get_at_pixel(newPos.x, newPos.y)
+        #print('atCell', atCell, atCell.properties)
+        atCell.properties['visited'] = True
+
+        neighborCells = self.map_layer.get_neighbors(atCell)
+        #print('neighborCells', neighborCells)
+        for cell in neighborCells:
+            #print('cell', cell, neighborCells[cell], neighborCells[cell].properties)
+            if not neighborCells[cell].properties['visited']:
+                print('First visit', neighborCells[cell])
+            
+            neighborCells[cell].properties['visited'] = True
+
+            #atKey = self.map_layer.get_key_at_pixel(neighborCells[cell].x, neighborCells[cell].y)
+            #print('atKey', atKey)
+
+        #atRegion = self.map_layer.get_in_region(newRect.left, newRect.bottom, newRect.right, newRect.top)
+        #print('atRegion', atRegion)
+
         # update collman
         #self.collman.clear()
         #for z, node in self.children:
