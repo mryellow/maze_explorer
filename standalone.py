@@ -6,12 +6,12 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 #
 
-#import random
-#import math
+import random
+import math
 
 import pyglet
-#from pyglet.window import key
-#from pyglet.gl import *
+from pyglet.window import key
+from pyglet.gl import *
 
 import cocos
 from cocos.director import director
@@ -27,6 +27,11 @@ from cocos.director import director
 import config
 from message import MessageLayer
 from world import WorldLayer
+
+def reflection_y(a):
+    assert isinstance(a, eu.Vector2)
+    return eu.Vector2(a.x, -a.y)
+
 
 # Gym integration
 def act(action):
