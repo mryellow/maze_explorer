@@ -38,7 +38,7 @@ consts = {
     },
     "player": {
         "radius": tile_size / 2,
-        "top_speed": 100.0,
+        "top_speed": 50.0,
         "angular_velocity": 240.0,  # degrees / s
         "accel": 85.0,
         "deaccel": 5.0,
@@ -48,6 +48,11 @@ consts = {
         },
         "reward": {
             "explore": 1.0
+        },
+        "sensors": {
+            "num": 8,
+            "fov": 15*math.pi/180,
+            "max_range": 100
         }
     },
     "world": {
@@ -115,6 +120,15 @@ class Player(cocos.sprite.Sprite):
             "battery": 100,
             "reward": 0
         }
+
+        self.sensor_num = config['sensors']['num']
+        self.sensor_fov = config['sensors']['fov']
+        self.sensor_range = config['sensors']['max_range']
+        self.sensors = []
+        for i in xrange(0, self.sensor_num):
+            rad = (i-((self.sensor_num-1)/2))*self.sensor_fov;
+            self.sensors.append(rad)
+            print('Initialised sensor', rad)
 
     def reset():
         self.impulse_dir = eu.Vector2(0.0, 1.0)
@@ -473,16 +487,17 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
         self.update_visited(newPos)
 
-        # update_state()
-
-        #self.player.sensors
-
+        # Check path for each sensor
         a = math.radians(self.player.rotation)
-        disFor = self.distance_to_tile(newPos, a)
-        #disLeft = self.distance_to_tile(newPos, (math.pi/4)+a)
-        #disRight = self.distance_to_tile(newPos, -(math.pi/4)+a)
-        print('dis', disFor)
+        for sensor in self.player.sensors:
+            rad = a + sensor
+            dis = min(self.distance_to_tile(newPos, rad), self.player.sensor_range)
 
+            end = newPos.copy()
+            end.x += math.sin(rad) * dis;
+            end.y += math.cos(rad) * dis;
+            line = draw.Line(newPos, end, (50,50,100,130))
+            self.map_layer.add(line)
 
         # update collman
         #self.collman.clear()
@@ -637,8 +652,8 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
                 end = ends[index_min]
 
             if end:
-                line = draw.Line(start, end, (50,50,100,130))
-                self.map_layer.add(line)
+                #line = draw.Line(start, end, (50,50,100,130))
+                #self.map_layer.add(line)
                 cell = self.map_layer.get_at_pixel(end.x, end.y)
                 if not cell or not cell.tile or not cell.tile.id > 0:
                     # Recurse
