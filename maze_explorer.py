@@ -431,15 +431,6 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         newRect = oldRect.copy()
         newRect.x, newRect.y = self.player.calc_move(dt, newVel)
 
-        # Debugging, Can I rotate Rects for collision?
-        #myOldRect = oldRect.copy()
-        #myOldRect.width = 200
-        #myOldRect.rotation = self.player.rotation + 90
-        #myNewRect = myOldRect.copy()
-        #myNewRect.x, myNewRect.y = self.player.calc_move(dt, newVel)
-        #print('myNewRect', myNewRect, myNewRect.rotation)
-        #myModVel = self.collide_map(self.map_layer, myOldRect, myNewRect, newVel.x, newVel.y)
-
         # Update position with new velocity
         newVel.x, newVel.y = self.collide_map(self.map_layer, oldRect, newRect, newVel.x, newVel.y)
         newPos = self.player.cshape.center
@@ -459,8 +450,8 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
         a = math.radians(self.player.rotation)
         disFor = self.distance_to_tile(newPos, a)
-        disLeft = self.distance_to_tile(newPos, (math.pi/4)+a)
-        disRight = self.distance_to_tile(newPos, -(math.pi/4)+a)
+        #disLeft = self.distance_to_tile(newPos, (math.pi/4)+a)
+        #disRight = self.distance_to_tile(newPos, -(math.pi/4)+a)
         print('dis', disFor)
 
 
@@ -631,17 +622,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
                     return distance
 
         # Start at `point`, check tile under each pixel
-        leng = search_grid(point, direction)
-        print('leng', leng)
-
-        #x = point.x
-        #y = point.y
-        d = 0
-        #if start and end:
-        #    d = math.sqrt(math.pow(start[0] - end[0], 2) + math.pow(start[1] - end[1], 2))
-        #    print('d', d)
-
-        return d
+        return search_grid(point, direction)
 
     def open_gate(self):
         self.gate.color = Player.palette['gate']
