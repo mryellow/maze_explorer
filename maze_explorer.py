@@ -459,8 +459,8 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
         a = math.radians(self.player.rotation)
         disFor = self.distance_to_tile(newPos, a)
-        #disLeft = self.distance_to_tile(newPos, (math.pi/4)+a)
-        #disRight = self.distance_to_tile(newPos, -(math.pi/4)+a)
+        disLeft = self.distance_to_tile(newPos, (math.pi/4)+a)
+        disRight = self.distance_to_tile(newPos, -(math.pi/4)+a)
         print('dis', disFor)
 
 
