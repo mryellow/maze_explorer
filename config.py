@@ -7,7 +7,7 @@ tile_size = 10
 tiles_x = 50
 tiles_y = 50
 
-fe = 1.0e-4
+#fe = 1.0e-4
 settings = {
     "window": {
         "width": 500,
