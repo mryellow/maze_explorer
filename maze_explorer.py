@@ -518,6 +518,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
     def update_visited(self, pos):
         assert isinstance(pos, eu.Vector2)
 
+        # Helper function
         def set_visited(layer, cell):
             if not cell.properties.get('visited') and cell.tile and cell.tile.id > 0:
                 cell.properties['visited'] = True
@@ -529,6 +530,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
                 key = layer.get_key_at_pixel(cell.x, cell.y)
                 #layer.set_cell_color(key[0], key[1], [155,155,155])
                 layer.set_cell_opacity(key[0], key[1], 255*0.8)
+        # End Helper
 
         # Get the current tile under player
         current = self.visit_layer.get_at_pixel(pos.x, pos.y)
