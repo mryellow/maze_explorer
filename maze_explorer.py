@@ -522,22 +522,21 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         print('reward', self.reward)
 
     # Find line intersects next tile
-    def distance_to_tile(self, point, direction, length = 50):
+    def distance_to_tile(self, point, direction, distance = 0, length = 50):
         assert isinstance(point, eu.Vector2)
         assert isinstance(direction, int) or isinstance(direction, float)
         assert isinstance(length, int) or isinstance(length, float)
 
         # Helper function
         # Given `point`, look for where inersects with next boundary (`y % 10`) in `direction`
-        def search_grid(search, rad, depth=5):
+        def search_grid(search, rad, depth = 5):
             if depth == 0:
-                return
+                return distance
             depth -= 1
 
             # Exit if outside window.
             if abs(search.x) > self.width or abs(search.y) > self.height:
-                # TODO: Return distance so far.
-                return
+                return distance
 
             m = math.tan(rad) # Slope
             sin = math.sin(rad)
@@ -585,16 +584,14 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
                 # Exit if outside window.
                 if not ends.y or abs(ends.y.y) > self.height:
-                    # TODO: Return distance so far.
-                    return
+                    return distance
 
             if left or right:
                 ends.x = get_next_grid('x', right)
 
                 # Exit if outside window.
                 if not ends.x or abs(ends.x.x) > self.width:
-                    # TODO: Return distance so far.
-                    return
+                    return distance
 
             # Get shortest
             ds = eu.Vector2(0, 0)
@@ -612,11 +609,13 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
                 if (ds.y < ds.x and ds.y > 0) or ds.x == 0:
                     #print('height shorter')
+                    distance += ds.y
                     end = ends.y
                     #line = draw.Line(start, end, (100,50,50,255))
 
                 if (ds.x < ds.y and ds.x > 0) or ds.y == 0:
                     #print('width shorter')
+                    distance += ds.x
                     end = ends.x
 
                 line = draw.Line(start, end, (50,50,100,130))
@@ -626,10 +625,11 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
                 cell = self.map_layer.get_at_pixel(end.x, end.y)
                 if not cell or not cell.tile or not cell.tile.id > 0:
                     # Recurse
-                    search_grid(end, rad, depth)
+                    return search_grid(end, rad, distance, depth)
 
         # Start at `point`, check tile under each pixel
-        search_grid(point, direction)
+        leng = search_grid(point, direction)
+        print('leng', leng)
 
         #x = point.x
         #y = point.y
