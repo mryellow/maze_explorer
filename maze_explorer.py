@@ -36,27 +36,29 @@ consts = {
         "vsync": True,
         "resizable": False
     },
-    "world": {
-        "width": tile_size * tiles_x,
-        "height": tile_size * tiles_y,
-        "rPlayer": tile_size / 2,
-        #"wall_scale_min": 0.75,  # relative to player
-        #"wall_scale_max": 2.25,  # relative to player
-        "topSpeed": 100.0,
+    "player": {
+        "radius": tile_size / 2,
+        "top_speed": 100.0,
         "angular_velocity": 240.0,  # degrees / s
         "accel": 85.0,
         "deaccel": 5.0,
-        "bindings": {
-            key.LEFT: 'left',
-            key.RIGHT: 'right',
-            key.UP: 'up',
-        },
-        "battery": {
+        "battery_use": {
             "angular": 0.04,
             "linear": 0.05
         },
         "reward": {
             "explore": 1.0
+        }
+    },
+    "world": {
+        "width": tile_size * tiles_x,
+        "height": tile_size * tiles_y,
+        #"wall_scale_min": 0.75,  # relative to player
+        #"wall_scale_max": 2.25,  # relative to player
+        "bindings": {
+            key.LEFT: 'left',
+            key.RIGHT: 'right',
+            key.UP: 'up',
         }
     },
     "view": {
@@ -84,17 +86,38 @@ def world_to_view(v):
 class Player(cocos.sprite.Sprite):
     palette = {}  # injected later
 
-    def __init__(self, cx, cy, radius, btype, img, vel=None):
+    def __init__(self, cx, cy, btype, img, velocity=None):
         super(Player, self).__init__(img)
+
+        config = consts['player']
+        self.radius = config['radius']
         # the 1.05 so that visual radius a bit greater than collision radius
-        self.scale = (radius * 1.05) * scale_x / (self.image.width / 2.0)
+        self.scale = (self.radius * 1.05) * scale_x / (self.image.width / 2.0)
         self.btype = btype
         self.color = self.palette[btype]
-        self.cshape = cm.CircleShape(eu.Vector2(cx, cy), radius)
+        self.cshape = cm.CircleShape(eu.Vector2(cx, cy), self.radius)
         self.update_center(self.cshape.center)
-        if vel is None:
-            vel = eu.Vector2(0.0, 0.0)
-        self.vel = vel
+        if velocity is None:
+            velocity = eu.Vector2(0.0, 0.0)
+        self.velocity = velocity
+
+        self.impulse_dir = eu.Vector2(0.0, 1.0)
+
+        self.top_speed = config['top_speed']
+        self.angular_velocity = config['angular_velocity']
+        self.accel = config['accel']
+        self.deaccel = config['deaccel']
+
+        self.battery_use = config['battery_use']
+        self.reward_explore = config['reward']['explore']
+
+        self.stats = {
+            "battery": 100,
+            "reward": 0
+        }
+
+    def reset():
+        self.impulse_dir = eu.Vector2(0.0, 1.0)
 
     def update_center(self, cshape_center):
         """cshape_center must be eu.Vector2"""
@@ -103,15 +126,55 @@ class Player(cocos.sprite.Sprite):
         self.position = world_to_view(cshape_center)
         self.cshape.center = cshape_center
 
-    def calc_move(self, dt, vel):
-        assert isinstance(vel, eu.Vector2)
+    # Update rotation and return impulse direction
+    def update_rotation(self, dt, buttons):
+        assert isinstance(buttons, dict)
 
-        old = self.cshape.center
+        ma = buttons['right'] - buttons['left']
+        if ma != 0:
+            self.stats['battery'] -= self.battery_use['angular']
+            self.rotation += ma * dt * self.angular_velocity
+
+        a = math.radians(self.rotation)
+        self.impulse_dir = eu.Vector2(math.sin(a), math.cos(a))
+
+    # Plan a new move; return Rects for start/finish positions and velocity.
+    def get_move(self, dt, buttons):
+        assert isinstance(dt, int) or isinstance(dt, float)
+        assert isinstance(buttons, dict)
+
+        newVel = self.velocity
+
+        # Redirect existing vel to new direction.
+        nv = newVel.magnitude()
+        newVel = nv * self.impulse_dir
+
+        mv = buttons['up']
+        if mv != 0:
+            self.stats['battery'] -= self.battery_use['linear']
+            newVel += dt * mv * self.accel * self.impulse_dir
+            nv = newVel.magnitude()
+            if nv > self.top_speed:
+                newVel *= self.top_speed / nv
+        else:
+            newVel += dt * self.deaccel * -newVel
+
+        # Position collision rects
+        oldRect = self.get_rect()
+        newRect = oldRect.copy()
+        newRect.x, newRect.y = self.get_position(dt, newVel)
+
+        return oldRect, newRect, newVel
+
+    def get_position(self, dt, velocity):
+        assert isinstance(velocity, eu.Vector2)
+
+        oldPos = self.cshape.center
         remaining_dt = dt
-        new = old.copy()
+        newPos = oldPos.copy()
 
         while remaining_dt > 1.e-6:
-            new = old + remaining_dt * vel
+            newPos = oldPos + remaining_dt * velocity
             consumed_dt = remaining_dt
             # what about screen boundaries ? if colision bounce
             #if new.x < r:
@@ -133,10 +196,10 @@ class Player(cocos.sprite.Sprite):
             remaining_dt -= consumed_dt
 
         # Upper left corner of Rect
-        new.x -= self.cshape.r
-        new.y -= self.cshape.r
+        newPos.x -= self.cshape.r
+        newPos.y -= self.cshape.r
 
-        return new
+        return newPos
 
     def get_rect(self):
         ppos = self.cshape.center
@@ -204,18 +267,6 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         world = consts['world']
         self.width = world['width']  # world virtual width
         self.height = world['height']  # world virtual height
-        self.rPlayer = world['rPlayer']  # player radius in virtual space
-        #self.wall_scale_min = world['wall_scale_min']
-        #self.wall_scale_max = world['wall_scale_max']
-        self.topSpeed = world['topSpeed']
-        self.angular_velocity = world['angular_velocity']
-        self.accel = world['accel']
-        self.deaccel = world['deaccel']
-
-        self.battery_use = world['battery']
-        self.reward_explore = world['reward']['explore']
-        self.battery = 100
-        self.reward = 0
 
         self.bindings = world['bindings']
         buttons = {}
@@ -289,9 +340,8 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         self.win_status = 'intermission'  # | 'undecided' | 'conquered' | 'losed'
 
         # player phys params
-        self.topSpeed = 75.0  # 50.
-        self.impulse_dir = eu.Vector2(0.0, 1.0)
-        self.impulseForce = 0.0
+        #if self.player is Player:
+        #    self.player.reset()
 
     def generate_random_level(self):
         # hardcoded params:
@@ -304,7 +354,6 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         # build !
         width = self.width
         height = self.height
-        rPlayer = self.rPlayer
         #min_separation = min_separation_rel * rPlayer
         #wall_scale_min = self.wall_scale_min
         #wall_scale_max = self.wall_scale_max
@@ -335,7 +384,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
         # add player
         cx, cy = (0.5 * width, 0.5 * height)
-        self.player = Player(cx, cy, rPlayer, 'player', pics['player'])
+        self.player = Player(cx, cy, 'player', pics['player'])
         self.add(self.player, z=z)
         z += 1
 
@@ -401,39 +450,14 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
             return
 
         # update target
-        buttons = self.buttons
-        ma = buttons['right'] - buttons['left']
-        if ma != 0:
-            self.battery -= self.battery_use['angular']
-            self.player.rotation += ma * dt * self.angular_velocity
+        self.player.update_rotation(dt, self.buttons)
 
-        a = math.radians(self.player.rotation)
-        self.impulse_dir = eu.Vector2(math.sin(a), math.cos(a))
-
-        newVel = self.player.vel
-
-        # Redirect existing vel to new direction.
-        nv = newVel.magnitude()
-        newVel = nv * self.impulse_dir
-
-        mv = buttons['up']
-        if mv != 0:
-            self.battery -= self.battery_use['linear']
-            newVel += dt * mv * self.accel * self.impulse_dir
-            nv = newVel.magnitude()
-            if nv > self.topSpeed:
-                newVel *= self.topSpeed / nv
-        else:
-            newVel += dt * self.deaccel * -newVel
-
-        # Position collision rects
-        oldRect = self.player.get_rect()
-        newRect = oldRect.copy()
-        newRect.x, newRect.y = self.player.calc_move(dt, newVel)
+        oldRect, newRect, newVel = self.player.get_move(dt, self.buttons)
 
         # Update position with new velocity
         newVel.x, newVel.y = self.collide_map(self.map_layer, oldRect, newRect, newVel.x, newVel.y)
         newPos = self.player.cshape.center
+        # FIXME: Do we set position to `newRect` even after `collide_map`?
         newPos.x, newPos.y = newRect.center
 
         # Collision detected
@@ -441,12 +465,17 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
             # TODO: Episode over?
             print("bumped", newVel, self.bumped_x, self.bumped_y)
 
-        self.player.vel = newVel
+        self.player.velocity = newVel
         self.player.update_center(newPos)
+
+        print('battery', self.player.stats['battery'])
+        print('reward', self.player.stats['reward'])
 
         self.update_visited(newPos)
 
-        print('battery', self.battery)
+        # update_state()
+
+        #self.player.sensors
 
         a = math.radians(self.player.rotation)
         disFor = self.distance_to_tile(newPos, a)
@@ -494,7 +523,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
                 cell.properties['visited'] = True
 
                 # Adjust next reward for exploration
-                self.reward += self.reward_explore
+                self.player.stats['reward'] += self.player.reward_explore
 
                 # Change colour of visited cells
                 key = layer.get_key_at_pixel(cell.x, cell.y)
@@ -509,8 +538,6 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         for cell in neighbours:
             neighbour = neighbours[cell]
             set_visited(self.visit_layer, neighbour)
-
-        print('reward', self.reward)
 
     # Find line intersects next tile
     def distance_to_tile(self, point, direction, length = 50):
@@ -577,6 +604,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
             if top or bottom:
                 ends.y = get_boundary('y', top)
 
+                # FIXME: Should these exit? What if other line collides sooner?
                 # Exit if outside window.
                 if abs(ends.y.y) > self.height:
                     return distance
