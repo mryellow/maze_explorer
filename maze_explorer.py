@@ -518,9 +518,9 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         assert isinstance(direction, int) or isinstance(direction, float)
         assert isinstance(length, int) or isinstance(length, float)
 
-        # Helper function
-        # Given `point`, look for where inersects with next boundary (`y % 10`) in `direction`
-        def search_grid(search, rad, distance = 0, depth = 5):
+        # Recursive dead-reckoning to next tile
+        # Given `point`, look for where intersects with next boundary (`y % 10`) in `direction`
+        def search_grid(search, rad, distance = 0, depth = 10):
             assert isinstance(search, eu.Vector2)
             assert isinstance(rad, float)
 
@@ -547,7 +547,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
             # Helper function
             # Find next grid on given axis
-            def get_next_grid(axis, increasing):
+            def get_boundary(axis, increasing):
                 assert isinstance(axis, unicode) and (axis == 'x' or axis == 'y')
 
                 if axis == 'x':
@@ -567,50 +567,47 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
                 # Find intersect
                 if axis == 'x':
-                    new = ((bound - search.x) / m) + search.y
-                    return eu.Vector2(bound, new)
+                    intersect = ((bound - search.x) / m) + search.y
+                    return eu.Vector2(bound, intersect)
                 elif axis == 'y':
-                    new = -m * (search.y - bound) + search.x
-                    return eu.Vector2(new, bound)
+                    intersect = -m * (search.y - bound) + search.x
+                    return eu.Vector2(intersect, bound)
             # End Helper
 
             if top or bottom:
-                ends.y = get_next_grid('y', top)
+                ends.y = get_boundary('y', top)
 
                 # Exit if outside window.
                 if abs(ends.y.y) > self.height:
                     return distance
 
             if left or right:
-                ends.x = get_next_grid('x', right)
+                ends.x = get_boundary('x', right)
 
                 # Exit if outside window.
                 if abs(ends.x.x) > self.width:
                     return distance
 
-            # Get shortest
-            ds = eu.Vector2(0, 0)
-
+            # Get shortest collision between axis
+            lengths = eu.Vector2(0, 0)
             if type(ends.x) == eu.Vector2:
-                ds.x = math.sqrt(math.pow(start.x - ends.x.x, 2) + math.pow(start.y - ends.x.y, 2))
+                diff = start - ends.x
+                lengths.x = math.sqrt(diff.dot(diff))
             if type(ends.y) == eu.Vector2:
-                ds.y = math.sqrt(math.pow(start.x - ends.y.x, 2) + math.pow(start.y - ends.y.y, 2))
+                diff = start - ends.y
+                lengths.y = math.sqrt(diff.dot(diff))
 
             end = None
-            if ds.x > 0 or ds.y > 0:
-                if (ds.y < ds.x and ds.y > 0) or ds.x == 0:
-                    #print('height shorter')
-                    distance += ds.y
-                    end = ends.y
 
-                if (ds.x < ds.y and ds.x > 0) or ds.y == 0:
-                    #print('width shorter')
-                    distance += ds.x
-                    end = ends.x
+            # Find shortest boundary intersect
+            index_min = min(xrange(len(lengths)), key=lengths.__getitem__)
 
-                line = draw.Line(start, end, (50,50,100,130))
+            if lengths[index_min] > 0:
+                distance += lengths[index_min]
+                end = ends[index_min]
 
             if end:
+                line = draw.Line(start, end, (50,50,100,130))
                 self.map_layer.add(line)
                 cell = self.map_layer.get_at_pixel(end.x, end.y)
                 if not cell or not cell.tile or not cell.tile.id > 0:
