@@ -527,71 +527,118 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         assert isinstance(direction, int) or isinstance(direction, float)
         assert isinstance(length, int) or isinstance(length, float)
 
+        # Helper function
         # Given `point`, look for where inersects with next boundary (`y % 10`) in `direction`
-        def search_grid(search_x, search_y, rad, depth=5):
+        def search_grid(search, rad, depth=5):
             if depth == 0:
                 return
             depth -= 1
 
-            # TODO: Exit if outside window.
+            # Exit if outside window.
+            if abs(search.x) > self.width or abs(search.y) > self.height:
+                # TODO: Return distance so far.
+                return
 
             m = math.tan(rad) # Slope
             sin = math.sin(rad)
             cos = math.cos(rad)
             #print(sin, cos)
 
-            boundary_x = self.map_layer.tw - (search_x % self.map_layer.tw)
-            boundary_y = self.map_layer.th - (search_y % self.map_layer.th)
+            top    = (cos > 0)
+            bottom = (cos < 0)
+            left   = (sin < 0)
+            right  = (sin > 0)
 
-            wedge = 45*(math.pi/180)
-            top = (cos > 0 and cos > wedge)
-            bottom = (cos < 0 and cos < -wedge)
-            left = (sin < 0 and cos < wedge and cos > -wedge)
-            right = (sin > 0 and cos < wedge and cos > -wedge)
+            start  = eu.Vector2(search.x, search.y)
+            ends   = eu.Vector2()
 
-            if top:
-                boundary_y = search_y + boundary_y
+            # Helper function
+            # Find next grid on given axis
+            def get_next_grid(axis, increasing):
+                if axis == 'x':
+                    tile = self.map_layer.tw
+                    position = search.x
+                elif axis == 'y':
+                    tile = self.map_layer.th
+                    position = search.y
+                else:
+                    return
 
-            if bottom:
-                boundary_y = search_y - boundary_y
+                # Set bound to next tile on axis
+                bound = (position % tile)
+                if increasing:
+                    bound = tile - bound
+                    bound = position + bound + 1
+                else:
+                    bound = position - bound - 1
 
-            # Intersect with horizontal line
+                # Find intersect
+                if axis == 'x':
+                    new = ((bound - search.x) / m) + search.y
+                    return eu.Vector2(bound, new)
+                elif axis == 'y':
+                    new = -m * (search.y - bound) + search.x
+                    return eu.Vector2(new, bound)
+
             if top or bottom:
-                #print('boundary_y', search_x, boundary_y)
-                new_x = -m * (search_y - boundary_y) + search_x
-                start = search_x, search_y
-                end = new_x, boundary_y
+                ends.y = get_next_grid('y', top)
 
-            if right:
-                boundary_x = search_x + boundary_x
-
-            if left:
-                boundary_x = search_x - boundary_x
+                # Exit if outside window.
+                if not ends.y or abs(ends.y.y) > self.height:
+                    # TODO: Return distance so far.
+                    return
 
             if left or right:
-                #print('boundary_x', search_x, boundary_x)
-                new_y = ((boundary_x - search_x) / m) + search_y
-                start = search_x, search_y
-                end = boundary_x, new_y
+                ends.x = get_next_grid('x', right)
 
-            if top or bottom or left or right:
-                line = draw.Line(start, end, (155,155,155,155))
+                # Exit if outside window.
+                if not ends.x or abs(ends.x.x) > self.width:
+                    # TODO: Return distance so far.
+                    return
+
+            # Get shortest
+            ds = eu.Vector2(0, 0)
+
+            if type(ends.y) == eu.Vector2:
+                #print('h', m, start, end_h)
+                ds.y = math.sqrt(math.pow(start.x - ends.y.x, 2) + math.pow(start.y - ends.y.y, 2))
+            if type(ends.x) == eu.Vector2:
+                #print('w', m, start, end_w)
+                ds.x = math.sqrt(math.pow(start.x - ends.x.x, 2) + math.pow(start.y - ends.x.y, 2))
+
+            end = None
+            if ds.x > 0 or ds.y > 0:
+                #print('d', ds.y, ds.x)
+
+                if (ds.y < ds.x and ds.y > 0) or ds.x == 0:
+                    #print('height shorter')
+                    end = ends.y
+                    #line = draw.Line(start, end, (100,50,50,255))
+
+                if (ds.x < ds.y and ds.x > 0) or ds.y == 0:
+                    #print('width shorter')
+                    end = ends.x
+
+                line = draw.Line(start, end, (50,50,100,130))
+
+            if end:
                 self.map_layer.add(line)
-
-                cell = self.map_layer.get_at_pixel(end[0], end[1])
+                cell = self.map_layer.get_at_pixel(end.x, end.y)
                 if not cell or not cell.tile or not cell.tile.id > 0:
                     # Recurse
-                    search_grid(end[0], end[1], rad, depth)
+                    search_grid(end, rad, depth)
 
         # Start at `point`, check tile under each pixel
-        search_grid(point.x, point.y, direction)
+        search_grid(point, direction)
 
         #x = point.x
         #y = point.y
-        #d = math.sqrt(math.pow(2, x - x1) + math.pow(2, y - y1))
-        #print('d', d)
+        d = 0
+        #if start and end:
+        #    d = math.sqrt(math.pow(start[0] - end[0], 2) + math.pow(start[1] - end[1], 2))
+        #    print('d', d)
 
-        return 0
+        return d
 
     def open_gate(self):
         self.gate.color = Player.palette['gate']
