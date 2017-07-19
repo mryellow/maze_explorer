@@ -64,12 +64,11 @@ class Player(cocos.sprite.Sprite):
         sensor_max = settings['sensors']['max_range']
 
         self.sensors = []
-        # FIXME: Off by one.
         for i in xrange(0, sensor_num):
             rad = (i-((sensor_num)/2))*sensor_fov;
             sensor = Sensor(rad, sensor_max)
             self.sensors.append(sensor)
-            print('Initialised sensor', i, rad)
+            #print('Initialised sensor', i, rad)
 
     def reset():
         self.impulse_dir = eu.Vector2(0.0, 1.0)

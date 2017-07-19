@@ -233,8 +233,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
         # Collision detected
         if self.bumped_x or self.bumped_y:
-            # TODO: Episode over?
-            print("bumped", newVel, self.bumped_x, self.bumped_y)
+            print("Bumped", newVel, self.bumped_x, self.bumped_y)
             self.player.game_over = True
 
         self.player.velocity = newVel
@@ -242,10 +241,11 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
         self.update_visited(newPos)
 
-        print(self.player.stats)
+        #print(self.player.stats)
 
         # Out of battery, set terminal state
         if self.player.stats['battery'] < 0:
+            print('Battery empty')
             self.player.game_over = True
 
         if self.player.game_over:
@@ -304,7 +304,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
         # Helper function
         def set_visited(layer, cell):
-            if not cell.properties.get('visited') and cell.tile and cell.tile.id > 0:
+            if cell and not cell.properties.get('visited') and cell.tile and cell.tile.id > 0:
                 cell.properties['visited'] = True
 
                 # Adjust next reward for exploration
