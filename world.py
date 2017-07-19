@@ -258,7 +258,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
             end = newPos.copy()
             end.x += math.sin(rad) * dis;
             end.y += math.cos(rad) * dis;
-            line = draw.Line(newPos, end, (50,50,100,130))
+            line = draw.Line(newPos, end, (50,50,100,10))
             self.map_layer.add(line)
 
         # update collman
