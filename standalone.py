@@ -28,7 +28,7 @@ def main(argv):
         #while not engine.director.window.has_exit:
             #engine.step()
     else:
-        engine.start()
+        engine.run()
 
 if __name__ == "__main__":
    main(sys.argv[1:])

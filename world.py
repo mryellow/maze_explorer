@@ -228,16 +228,21 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         if self.bumped_x or self.bumped_y:
             # TODO: Episode over?
             print("bumped", newVel, self.bumped_x, self.bumped_y)
+            self.player.game_over = True
 
         self.player.velocity = newVel
         self.player.update_center(newPos)
 
-        print('battery', self.player.stats['battery'])
-        print('reward', self.player.stats['reward'])
-
         self.update_visited(newPos)
 
+        print(self.player.stats)
+
+        # Out of battery, set terminal state
+        if self.player.stats['battery'] < 0:
+            self.player.game_over = True
+
         # Check path for each sensor
+        # FIXME: Only draw lines if UI is visible
         a = math.radians(self.player.rotation)
         for sensor in self.player.sensors:
             rad = a + sensor
@@ -419,8 +424,8 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         # Start at `point`, check tile under each pixel
         return search_grid(point, direction)
 
-    def open_gate(self):
-        self.gate.color = Player.palette['gate']
+    #def open_gate(self):
+    #    self.gate.color = Player.palette['gate']
 
     def on_key_press(self, k, m):
         binds = self.bindings

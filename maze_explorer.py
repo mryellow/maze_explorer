@@ -15,13 +15,15 @@ class MazeExplorer():
     Wrapper for game engine
     """
 
-    def __init__(self):
+    def __init__(self, visible = True):
+        config.settings['window']['visible'] = visible
+
         self.director = director
         self.director.init(**config.settings['window'])
         #pyglet.font.add_directory('.') # adjust as necessary if font included
         self.z = 0
 
-        self.actions_num = 0
+        self.actions_num = len(config.settings['world']['bindings'])
 
     def create_scene(self):
         self.scene = cocos.scene.Scene()
@@ -39,12 +41,11 @@ class MazeExplorer():
         self.scene.add(self.world_layer, z=self.z)
         self.z += 1
 
-        self.actions_num = len(self.world_layer.buttons)-1
-
         self.director._set_scene(self.scene)
 
     def act(self, action):
         assert isinstance(action, int)
+        #assert self.action_space.contains(action), "%r (%s) invalid"%(action, type(action))
 
         # Reset other buttons
         for k in self.world_layer.buttons:
@@ -63,7 +64,9 @@ class MazeExplorer():
         self.world_layer.player.stats['reward'] = 0
 
         # TODO: Return actual action taken, observation and reward
-        return reward
+        info = {}
+        observation = []
+        return observation, reward, self.world_layer.player.game_over, info
 
     def step(self):
         self.director.window.switch_to()
@@ -71,6 +74,7 @@ class MazeExplorer():
         self.director.window.dispatch_event('on_draw')
         self.director.window.flip()
 
+        # Ticking before events caused glitches.
         pyglet.clock.tick()
 
         #for window in pyglet.app.windows:
@@ -79,6 +83,6 @@ class MazeExplorer():
         #    window.dispatch_event('on_draw')
         #    window.flip()
 
-    def start(self):
+    def run(self):
         self.create_scene()
         return self.director.run(self.scene)

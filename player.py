@@ -44,6 +44,7 @@ class Player(cocos.sprite.Sprite):
         self.accel = settings['accel']
         self.deaccel = settings['deaccel']
 
+        self.game_over = False
         self.battery_use = settings['battery_use']
         self.reward_explore = settings['reward']['explore']
 
@@ -56,6 +57,7 @@ class Player(cocos.sprite.Sprite):
         self.sensor_fov = settings['sensors']['fov']
         self.sensor_range = settings['sensors']['max_range']
         self.sensors = []
+        # FIXME: Off by one.
         for i in xrange(0, self.sensor_num):
             rad = (i-((self.sensor_num-1)/2))*self.sensor_fov;
             self.sensors.append(rad)
