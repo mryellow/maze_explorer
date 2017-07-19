@@ -29,7 +29,7 @@ settings = {
             "explore": 1.0
         },
         "sensors": {
-            "num": 8,
+            "num": 9,
             "fov": 15*math.pi/180,
             "max_range": 100
         }

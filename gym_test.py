@@ -2,7 +2,7 @@ import gym
 import gym_mazeexplorer
 
 env = gym.make('MazeExplorer-v0')
-env.reset()
+observation = env.reset()
 
 for _ in range(100):
     env.render()

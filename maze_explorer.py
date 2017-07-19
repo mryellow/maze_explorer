@@ -25,6 +25,8 @@ class MazeExplorer():
         self.z = 0
 
         self.actions_num = len(config.settings['world']['bindings'])
+        # Sensors, plus one for battery indicator
+        self.observation_num = config.settings['player']['sensors']['num'] + 1
 
     def create_scene(self):
         self.scene = cocos.scene.Scene()
@@ -64,14 +66,7 @@ class MazeExplorer():
         reward = self.world_layer.player.stats['reward']
         self.world_layer.player.stats['reward'] = 0
 
-        # Create observation from sensor proximities
-        observation = [o.proximity for o in self.world_layer.player.sensors]
-
-        # Include battery level in state
-        observation.append(self.world_layer.player.stats['battery']/100)
-
-        info = {}
-        return np.array(observation), reward, self.world_layer.player.game_over, info
+        return reward
 
     def step(self):
         self.director.window.switch_to()

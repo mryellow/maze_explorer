@@ -11,6 +11,9 @@ from cocos import draw
 import config
 from player import Player
 
+import os
+script_dir = os.path.dirname(__file__)
+
 class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
     """
@@ -40,7 +43,9 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
         # load resources:
         pics = {}
-        pics["player"] = pyglet.resource.image('player7.png')
+        #pics["player"] = pyglet.resource.image('player7.png')
+        pics["player"] = pyglet.image.load(os.path.join(script_dir, 'player7.png'))
+
         #pics["food"] = pyglet.resource.image('circle6.png')
         #pics["wall"] = pyglet.resource.image('circle6.png')
         self.pics = pics
@@ -125,7 +130,8 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         z = 0
 
         # add walls
-        self.map_layer = ti.load('test.tmx')['map0']
+        #self.map_layer = ti.load('test.tmx')['map0']
+        self.map_layer = ti.load(os.path.join(script_dir, 'test.tmx'))['map0']
         self.map_layer.set_view(0, 0, self.map_layer.px_width, self.map_layer.px_height)
         # FIXME: Both `scale_x` and `scale_y`
         self.map_layer.scale = config.scale_x
@@ -133,7 +139,8 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         z += 1
 
         # add floor
-        self.visit_layer = ti.load('ones.tmx')['map0']
+        #self.visit_layer = ti.load('ones.tmx')['map0']
+        self.visit_layer = ti.load(os.path.join(script_dir, 'ones.tmx'))['map0']
         for i in xrange(0, len(self.map_layer.cells)):
             for j in xrange(0, len(self.map_layer.cells[i])):
                 col = self.map_layer.cells[i][j]
