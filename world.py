@@ -10,6 +10,7 @@ from cocos import draw
 
 import config
 from player import Player
+from generator import Generator
 
 import os
 script_dir = os.path.dirname(__file__)
@@ -34,6 +35,8 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         world = config.settings['world']
         self.width = world['width']  # world virtual width
         self.height = world['height']  # world virtual height
+
+        self.generator = Generator()
 
         self.bindings = world['bindings']
         buttons = {}
@@ -131,7 +134,10 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
         # add walls
         #self.map_layer = ti.load('test.tmx')['map0']
-        self.map_layer = ti.load(os.path.join(script_dir, 'test.tmx'))['map0']
+        randmap = self.generator.map()
+        #print('randmap', randmap)
+        #self.map_layer = ti.load(os.path.join(script_dir, 'test.tmx'))['map0']
+        self.map_layer = randmap
         self.map_layer.set_view(0, 0, self.map_layer.px_width, self.map_layer.px_height)
         # FIXME: Both `scale_x` and `scale_y`
         self.map_layer.scale = config.scale_x
