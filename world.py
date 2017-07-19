@@ -32,10 +32,10 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         self.width = world['width']  # world virtual width
         self.height = world['height']  # world virtual height
 
-        self.bindings = world['bindings']
+        bindings = world['bindings']
         buttons = {}
-        for k in self.bindings:
-            buttons[self.bindings[k]] = 0
+        for k in bindings:
+            buttons[bindings[k]] = 0
         self.buttons = buttons
 
         # load resources:

@@ -21,6 +21,8 @@ class MazeExplorer():
         #pyglet.font.add_directory('.') # adjust as necessary if font included
         self.z = 0
 
+        self.actions_num = 0
+
     def create_scene(self):
         self.scene = cocos.scene.Scene()
         self.z = 0
@@ -33,9 +35,49 @@ class MazeExplorer():
         message_layer = MessageLayer()
         self.scene.add(message_layer, z=self.z)
         self.z += 1
-        world_layer = WorldLayer(fn_show_message=message_layer.show_message)
-        self.scene.add(world_layer, z=self.z)
+        self.world_layer = WorldLayer(fn_show_message=message_layer.show_message)
+        self.scene.add(self.world_layer, z=self.z)
         self.z += 1
+
+        self.actions_num = len(self.world_layer.buttons)-1
+
+        self.director._set_scene(self.scene)
+
+    def act(self, action):
+        assert isinstance(action, int)
+
+        # Reset other buttons
+        for k in self.world_layer.buttons:
+            self.world_layer.buttons[k] = 0
+
+        key = sorted(self.world_layer.buttons.keys())[action]
+
+        # Set action for next step
+        self.world_layer.buttons[key] = 1
+
+        # Act in the environment
+        self.step()
+
+        # Return reward and reset for next step
+        reward = self.world_layer.player.stats['reward']
+        self.world_layer.player.stats['reward'] = 0
+
+        # TODO: Return actual action taken, observation and reward
+        return reward
+
+    def step(self):
+        self.director.window.switch_to()
+        self.director.window.dispatch_events()
+        self.director.window.dispatch_event('on_draw')
+        self.director.window.flip()
+
+        pyglet.clock.tick()
+
+        #for window in pyglet.app.windows:
+        #    window.switch_to()
+        #    window.dispatch_events()
+        #    window.dispatch_event('on_draw')
+        #    window.flip()
 
     def start(self):
         self.create_scene()

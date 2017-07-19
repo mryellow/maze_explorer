@@ -40,6 +40,7 @@ settings = {
         #"wall_scale_min": 0.75,  # relative to player
         #"wall_scale_max": 2.25,  # relative to player
         "bindings": {
+            0: 'noop',
             key.LEFT: 'left',
             key.RIGHT: 'right',
             key.UP: 'up',
