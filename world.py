@@ -241,22 +241,25 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         if self.player.stats['battery'] < 0:
             self.player.game_over = True
 
+        if self.player.game_over:
+            print('Game Over')
+
         # Check path for each sensor
-        # FIXME: Only draw lines if UI is visible
+
         a = math.radians(self.player.rotation)
         for sensor in self.player.sensors:
-            rad = a + sensor
-            dis = min(self.distance_to_tile(newPos, rad), self.player.sensor_range)
+            rad = a + sensor.angle
+            dis = min(self.distance_to_tile(newPos, rad), sensor.max_range)
 
+            # Keep state of sensed range
+            sensor.proximity = dis
+
+            # FIXME: Only draw lines if UI is visible
             end = newPos.copy()
             end.x += math.sin(rad) * dis;
             end.y += math.cos(rad) * dis;
             line = draw.Line(newPos, end, (50,50,100,130))
             self.map_layer.add(line)
-
-        #buffer = pyglet.image.get_buffer_manager().get_color_buffer()
-        #image_data = buffer.get_image_data()
-        #print(image_data)
 
         # update collman
         #self.collman.clear()

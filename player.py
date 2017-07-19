@@ -15,6 +15,12 @@ def world_to_view(v):
 #    assert isinstance(a, eu.Vector2)
 #    return eu.Vector2(a.x, -a.y)
 
+class Sensor():
+    def __init__(self, angle, max_range):
+        self.angle = angle
+        self.max_range = max_range
+        self.proximity = self.max_range
+
 class Player(cocos.sprite.Sprite):
     palette = {}  # injected later
 
@@ -53,15 +59,17 @@ class Player(cocos.sprite.Sprite):
             "reward": 0
         }
 
-        self.sensor_num = settings['sensors']['num']
-        self.sensor_fov = settings['sensors']['fov']
-        self.sensor_range = settings['sensors']['max_range']
+        sensor_num = settings['sensors']['num']
+        sensor_fov = settings['sensors']['fov']
+        sensor_max = settings['sensors']['max_range']
+
         self.sensors = []
         # FIXME: Off by one.
-        for i in xrange(0, self.sensor_num):
-            rad = (i-((self.sensor_num-1)/2))*self.sensor_fov;
-            self.sensors.append(rad)
-            print('Initialised sensor', rad)
+        for i in xrange(0, sensor_num):
+            rad = (i-((sensor_num-1)/2))*sensor_fov;
+            sensor = Sensor(rad, sensor_max)
+            self.sensors.append(sensor)
+            print('Initialised sensor', sensor)
 
     def reset():
         self.impulse_dir = eu.Vector2(0.0, 1.0)

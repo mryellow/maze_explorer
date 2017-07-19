@@ -1,5 +1,6 @@
 from __future__ import division, print_function, unicode_literals
 
+import numpy as np
 import pyglet
 #from pyglet.gl import *
 
@@ -63,10 +64,14 @@ class MazeExplorer():
         reward = self.world_layer.player.stats['reward']
         self.world_layer.player.stats['reward'] = 0
 
-        # TODO: Return actual action taken, observation and reward
+        # Create observation from sensor proximities
+        observation = [o.proximity for o in self.world_layer.player.sensors]
+
+        # Include battery level in state
+        observation.append(self.world_layer.player.stats['battery']/100)
+
         info = {}
-        observation = []
-        return observation, reward, self.world_layer.player.game_over, info
+        return np.array(observation), reward, self.world_layer.player.game_over, info
 
     def step(self):
         self.director.window.switch_to()

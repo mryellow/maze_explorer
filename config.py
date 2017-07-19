@@ -22,8 +22,8 @@ settings = {
         "accel": 85.0,
         "deaccel": 5.0,
         "battery_use": {
-            "angular": 0.04,
-            "linear": 0.05
+            "angular": 0.09,
+            "linear": 0.10
         },
         "reward": {
             "explore": 1.0
