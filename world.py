@@ -227,8 +227,23 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
         # Update position with new velocity
         newVel.x, newVel.y = self.collide_map(self.map_layer, oldRect, newRect, newVel.x, newVel.y)
+
+        # Stop at edges
+        if newRect.top > self.height:
+            newRect.y = self.height - (self.player.radius * 2)
+
+        if newRect.bottom < 0:
+            newRect.y = 0
+
+        if newRect.left < 0:
+            print('off left')
+            newRect.x = 0
+
+        if newRect.right > self.width:
+            print('off right')
+            newRect.x = self.width - (self.player.radius * 2)
+
         newPos = self.player.cshape.center
-        # FIXME: Do we set position to `newRect` even after `collide_map`?
         newPos.x, newPos.y = newRect.center
 
         # Collision detected
