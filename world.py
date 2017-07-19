@@ -35,10 +35,10 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         self.width = world['width']  # world virtual width
         self.height = world['height']  # world virtual height
 
-        bindings = world['bindings']
+        self.bindings = world['bindings']
         buttons = {}
-        for k in bindings:
-            buttons[bindings[k]] = 0
+        for k in self.bindings:
+            buttons[self.bindings[k]] = 0
         self.buttons = buttons
 
         # load resources:
@@ -318,12 +318,13 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
         # Get the current tile under player
         current = self.visit_layer.get_at_pixel(pos.x, pos.y)
-        set_visited(self.visit_layer, current)
 
-        neighbours = self.visit_layer.get_neighbors(current)
-        for cell in neighbours:
-            neighbour = neighbours[cell]
-            set_visited(self.visit_layer, neighbour)
+        if current:
+            set_visited(self.visit_layer, current)
+            neighbours = self.visit_layer.get_neighbors(current)
+            for cell in neighbours:
+                neighbour = neighbours[cell]
+                set_visited(self.visit_layer, neighbour)
 
     # Find line intersects next tile
     def distance_to_tile(self, point, direction, length = 50):
