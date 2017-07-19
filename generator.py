@@ -18,7 +18,7 @@ class Generator():
         epoch = int(time.time())
         filename = 'map_' + str(epoch) + '.tmx'
 
-        print(template)
+        #print(template)
 
         # Start within borders
         self.recursive_division(template.cells, 3, 50-2, 50-2, 1, 1)
@@ -54,8 +54,9 @@ class Generator():
             return
 
         for i in xrange(0, gap_size):
-            # FIXME: make 1 depend on `min_size`
-            if abs(gap - i) > 1:
+            # TODO: make 1 depend on `door_size`
+            #if abs(gap - i) > 1:
+            if abs(gap - i) > 0:
                 # Copy wall tile from (0,0)
                 if axis == HORIZONTAL:
                     cells[x+i][y+cut].tile = cells[0][0].tile
@@ -64,10 +65,16 @@ class Generator():
 
         print(x, y, cut, cut_size, gap, gap_size, 'H' if (axis == HORIZONTAL) else 'V')
 
+
         nx, ny = x, y
         w, h = [cut, height] if (axis == HORIZONTAL) else [width, cut]
         self.recursive_division(cells, min_size, w, h, nx, ny)
+        print('a', nx, ny, w, h)
 
-        #nx, ny = [x+cut, y] if (axis == HORIZONTAL) else [x, y+cut]
-        #w, h = [width-cut, height] if (axis == HORIZONTAL) else [width, height-cut]
-        #self.recursive_division(cells, min_size, w, h, nx, ny)
+        # FIXME: Wall in a doorway..
+
+        #print(cut, cut_size, cut_size-cut)
+        nx, ny = [x+cut, y] if (axis == HORIZONTAL) else [x, y+cut]
+        w, h = [cut_size-nx, height] if (axis == HORIZONTAL) else [width, cut_size-ny]
+        self.recursive_division(cells, min_size, w, h, nx, ny)
+        print('b', nx, ny, w, h)
