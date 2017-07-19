@@ -236,11 +236,9 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
             newRect.y = 0
 
         if newRect.left < 0:
-            print('off left')
             newRect.x = 0
 
         if newRect.right > self.width:
-            print('off right')
             newRect.x = self.width - (self.player.radius * 2)
 
         newPos = self.player.cshape.center
