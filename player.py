@@ -119,11 +119,11 @@ class Player(cocos.sprite.Sprite):
         # Position collision rects
         oldRect = self.get_rect()
         newRect = oldRect.copy()
-        newRect.x, newRect.y = self.get_position(dt, newVel)
+        newRect.x, newRect.y = self.get_destination(dt, newVel)
 
         return oldRect, newRect, newVel
 
-    def get_position(self, dt, velocity):
+    def get_destination(self, dt, velocity):
         assert isinstance(velocity, eu.Vector2)
 
         oldPos = self.cshape.center

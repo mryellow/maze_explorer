@@ -229,12 +229,13 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         # update target
         self.player.update_rotation(dt, self.buttons)
 
+        # Get planned update
         oldRect, newRect, newVel = self.player.get_move(dt, self.buttons)
 
-        # Update position with new velocity
+        # Update planned velocity to avoid collisions
         newVel.x, newVel.y = self.collide_map(self.map_layer, oldRect, newRect, newVel.x, newVel.y)
 
-        # Stop at edges
+        # Stop at edges of map
         if newRect.top > self.height:
             newRect.y = self.height - (self.player.radius * 2)
 
@@ -246,6 +247,9 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
         if newRect.right > self.width:
             newRect.x = self.width - (self.player.radius * 2)
+
+        # Applying rect from planned move
+        newRect.x, newRect.y = self.player.get_destination(dt, newVel)
 
         newPos = self.player.cshape.center
         newPos.x, newPos.y = newRect.center
