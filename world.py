@@ -159,13 +159,13 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         corner = randint(0,3)
         padding = eu.Vector2(self.map_layer.tw*1.5, self.map_layer.th*1.5)
         corners = [
-            (padding.x, padding.y), # Bottom left
-            (padding.x, self.map_layer.px_width-padding.y), # Bottom right
-            (self.map_layer.px_height-padding.x, padding.y), # Top left
-            (self.map_layer.px_height-padding.x, self.map_layer.px_width-padding.y) # Top right
+            eu.Vector2(padding.x, padding.y), # Bottom left
+            eu.Vector2(padding.x, self.map_layer.px_width-padding.y), # Bottom right
+            eu.Vector2(self.map_layer.px_height-padding.x, padding.y), # Top left
+            eu.Vector2(self.map_layer.px_height-padding.x, self.map_layer.px_width-padding.y) # Top right
         ]
-        cx, cy = corners[corner]
-        self.player = Player(cx, cy, 'player', pics['player'])
+        self.spawn = corners[corner]
+        self.player = Player(self.spawn.x, self.spawn.y, 'player', pics['player'])
         self.add(self.player, z=z)
         z += 1
 
@@ -350,11 +350,20 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         current = self.visit_layer.get_at_pixel(pos.x, pos.y)
 
         if current:
-            set_visited(self.visit_layer, current)
-            neighbours = self.visit_layer.get_neighbors(current)
-            for cell in neighbours:
-                neighbour = neighbours[cell]
-                set_visited(self.visit_layer, neighbour)
+            # Escaped!!
+            if self.player.stats['battery'] <= 50 and \
+                current == self.visit_layer.get_at_pixel(self.spawn.x, self.spawn.y):
+                print('Escaped!!')
+                self.player.stats['reward'] += self.player.rewards['goal']
+                self.player.game_over = True
+
+            # Only record/reward exploration when battery is above 50%
+            if self.player.stats['battery'] > 50:
+                set_visited(self.visit_layer, current)
+                neighbours = self.visit_layer.get_neighbors(current)
+                for cell in neighbours:
+                    neighbour = neighbours[cell]
+                    set_visited(self.visit_layer, neighbour)
 
     def update_sensors(self, pos):
         """

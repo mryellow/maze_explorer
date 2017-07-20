@@ -116,10 +116,10 @@ class Player(cocos.sprite.Sprite):
         Check terminal conditions
         """
         # Out of battery, set terminal state
-        if self.stats['battery'] < 0:
+        if self.stats['battery'] <= 0:
             self.stats['battery'] = 0
             # TODO: Let agent keep playing in hopes of finding end-goal
-            self.game_over = True
+            #self.game_over = True
 
         if self.game_over:
             self.stats['reward'] += self.rewards['terminal']
