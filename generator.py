@@ -67,6 +67,8 @@ class Generator():
 
         # Check if next tile is a doorway
         def dodge_doors(cut):
+            assert isinstance(cut, int) or isinstance(cut, float)
+
             empty = False
             if axis == HORIZONTAL:
                 idx = x+gap_size
