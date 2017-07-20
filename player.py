@@ -81,8 +81,28 @@ class Player(cocos.sprite.Sprite):
             self.sensors.append(sensor)
             #print('Initialised sensor', i, rad)
 
-    def reset():
-        self.impulse_dir = eu.Vector2(0.0, 1.0)
+    def get_reward(self):
+        """
+        Return reward and reset for next step
+        """
+        reward = self.stats['reward']
+        self.stats['reward'] = 0
+
+        return reward
+
+    def get_state(self):
+        """
+        Create state from sensors and battery
+        """
+        # Create observation from sensor proximities
+        observation = [o.proximity_norm() for o in self.sensors]
+        # Include battery level in state
+        observation.append(self.stats['battery']/100)
+
+        return observation
+
+    #def reset(self):
+    #    self.impulse_dir = eu.Vector2(0.0, 1.0)
 
     def update_center(self, cshape_center):
         """cshape_center must be eu.Vector2"""

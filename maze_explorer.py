@@ -68,16 +68,12 @@ class MazeExplorer():
         # Act in the environment
         self.step()
 
-        # Create observation from sensor proximities
-        observation = [o.proximity_norm() for o in self.world_layer.player.sensors]
-        # Include battery level in state
-        observation.append(self.world_layer.player.stats['battery']/100)
+        observation = self.world_layer.player.get_state()
+        reward = self.world_layer.player.get_reward()
+        terminal = self.world_layer.player.game_over
+        info = {}
 
-        # Return reward and reset for next step
-        reward = self.world_layer.player.stats['reward']
-        self.world_layer.player.stats['reward'] = 0
-
-        return observation, reward, self.world_layer.player.game_over, {}
+        return observation, reward, terminal, info
 
     def step(self):
         """
