@@ -156,10 +156,20 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         self.add(self.visit_layer, z=-1)
 
         # add player
-        # FIXME: Find square without wall
         cx, cy = (0.5 * width, 0.5 * height)
-        home_tile = self.map_layer.get_at_pixel(cx, cy)
-        print(home_tile)
+        # Find square without wall
+        found_home = False
+        while not found_home:
+            home_tile = self.map_layer.get_at_pixel(cx, cy)
+            if home_tile.tile is None:
+                # Place in center of empty tile
+                found_home = True
+                cx = home_tile.x+(self.map_layer.tw/2)
+                cy = home_tile.y+(self.map_layer.th/2)
+            else:
+                #print('Home occupied')
+                cx += 5
+                cy += 5
 
         self.player = Player(cx, cy, 'player', pics['player'])
         self.add(self.player, z=z)
