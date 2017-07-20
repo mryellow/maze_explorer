@@ -415,6 +415,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
             ends   = eu.Vector2()
 
             # Helper function
+            # FIXME: Does MapLayer provide something better? Neighbours?
             # Find next grid on given axis
             def get_boundary(axis, increasing):
                 assert (isinstance(axis, str) or isinstance(axis, unicode)) and (axis == 'x' or axis == 'y')
@@ -445,18 +446,11 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
             if top or bottom:
                 ends.y = get_boundary('y', top)
-
-                # FIXME: Should these exit? What if other line collides sooner?
-                # Exit if outside window.
-                if abs(ends.y.y) > self.height:
-                    return distance
+                ends.y.y = min(ends.y.y, self.height)
 
             if left or right:
                 ends.x = get_boundary('x', right)
-
-                # Exit if outside window.
-                if abs(ends.x.x) > self.width:
-                    return distance
+                ends.x.x = min(ends.x.x, self.width)
 
             # Get shortest collision between axis
             lengths = eu.Vector2(0, 0)
@@ -477,8 +471,6 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
                 end = ends[index_min]
 
             if end:
-                #line = draw.Line(start, end, (50,50,100,130))
-                #self.map_layer.add(line)
                 cell = self.map_layer.get_at_pixel(end.x, end.y)
                 if not cell or not cell.tile or not cell.tile.id > 0:
                     # Recurse
