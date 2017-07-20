@@ -244,12 +244,11 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         oldRect, newRect, newVel = self.player.get_move(dt, self.buttons)
 
         # Update planned velocity to avoid collisions
+        # modifies `newRect` to be the nearest rect ... still outside any `map_layer` object.
         newVel.x, newVel.y = self.collide_map(self.map_layer, oldRect, newRect, newVel.x, newVel.y)
 
-        # Applying rect from planned move
-        #newRect.x, newRect.y = self.player.get_destination(dt, newVel)
-
         # Stop at edges of map
+        # FIXME: Use top, bottom, left, right etc instead of radius
         if newRect.top > self.height:
             newRect.y = self.height - (self.player.radius * 2)
 
