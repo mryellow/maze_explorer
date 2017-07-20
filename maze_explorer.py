@@ -77,7 +77,7 @@ class MazeExplorer():
         reward = self.world_layer.player.stats['reward']
         self.world_layer.player.stats['reward'] = 0
 
-        return observation, reward
+        return observation, reward, self.world_layer.player.game_over, {}
 
     def step(self):
         """
