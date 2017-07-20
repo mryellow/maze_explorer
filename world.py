@@ -285,13 +285,13 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         self.player.update_center(newPos)
         self.player.update_terminal()
 
-        # TODO: Display messages for humans at some point
-        #if self.player.game_over:
-        #    self.level_losed()
-
         # In WorldLayer so we can access map
         self.update_visited(newPos)
         self.update_sensors(newPos)
+
+        # TODO: Display messages for humans at some point
+        #if self.player.game_over:
+        #    self.level_losed()
 
         # update collman
         #self.collman.clear()
