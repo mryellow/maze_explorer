@@ -1,4 +1,5 @@
 import math
+from random import randint
 
 import pyglet
 
@@ -156,21 +157,16 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         self.add(self.visit_layer, z=-1)
 
         # add player
-        cx, cy = (0.5 * width, 0.5 * height)
-        # Find square without wall
-        found_home = False
-        while not found_home:
-            home_tile = self.map_layer.get_at_pixel(cx, cy)
-            if home_tile.tile is None:
-                # Place in center of empty tile
-                found_home = True
-                cx = home_tile.x+(self.map_layer.tw/2)
-                cy = home_tile.y+(self.map_layer.th/2)
-            else:
-                #print('Home occupied')
-                cx += 5
-                cy += 5
-
+        # Start in random corner
+        corner = randint(0,3)
+        padding = eu.Vector2(self.map_layer.tw*1.5, self.map_layer.th*1.5)
+        corners = [
+            (padding.x, padding.y), # Bottom left
+            (padding.x, self.map_layer.px_width-padding.y), # Bottom right
+            (self.map_layer.px_height-padding.x, padding.y), # Top left
+            (self.map_layer.px_height-padding.x, self.map_layer.px_width-padding.y) # Top right
+        ]
+        cx, cy = corners[corner]
         self.player = Player(cx, cy, 'player', pics['player'])
         self.add(self.player, z=z)
         z += 1

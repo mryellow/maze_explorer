@@ -1,4 +1,4 @@
-import time
+#import time
 from random import randint
 
 import cocos
