@@ -59,7 +59,8 @@ class Player(cocos.sprite.Sprite):
 
         self.stats = {
             "battery": 100,
-            "reward": 0
+            "reward": 0,
+            "score": 0
         }
 
         sensor_num = settings['sensors']['num']

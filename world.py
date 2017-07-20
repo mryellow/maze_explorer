@@ -12,6 +12,7 @@ from cocos import draw
 import config
 from player import Player
 from generator import Generator
+from score import ScoreLayer
 
 import os
 script_dir = os.path.dirname(__file__)
@@ -169,6 +170,10 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         cx, cy = corners[corner]
         self.player = Player(cx, cy, 'player', pics['player'])
         self.add(self.player, z=z)
+        z += 1
+
+        self.score = ScoreLayer(self.player.stats)
+        self.add(self.score, z=z)
         z += 1
 
         #self.collman.add(self.map_layer)
@@ -338,6 +343,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
                 # Adjust next reward for exploration
                 self.player.stats['reward'] += self.player.reward_explore
+                self.player.stats['score'] += self.player.reward_explore
 
                 # Change colour of visited cells
                 key = layer.get_key_at_pixel(cell.x, cell.y)
