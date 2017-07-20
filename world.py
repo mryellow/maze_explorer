@@ -133,11 +133,8 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         z = 0
 
         # add walls
-        #self.map_layer = ti.load('test.tmx')['map0']
-        randmap = self.generator.map()
-        #print('randmap', randmap)
         #self.map_layer = ti.load(os.path.join(script_dir, 'test.tmx'))['map0']
-        self.map_layer = randmap
+        self.map_layer = self.generator.map()
         self.map_layer.set_view(0, 0, self.map_layer.px_width, self.map_layer.px_height)
         # FIXME: Both `scale_x` and `scale_y`
         self.map_layer.scale = config.scale_x
@@ -145,7 +142,6 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         z += 1
 
         # add floor
-        #self.visit_layer = ti.load('ones.tmx')['map0']
         self.visit_layer = ti.load(os.path.join(script_dir, 'ones.tmx'))['map0']
         for i in xrange(0, len(self.map_layer.cells)):
             for j in xrange(0, len(self.map_layer.cells[i])):
@@ -160,7 +156,11 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         self.add(self.visit_layer, z=-1)
 
         # add player
+        # FIXME: Find square without wall
         cx, cy = (0.5 * width, 0.5 * height)
+        home_tile = self.map_layer.get_at_pixel(cx, cy)
+        print(home_tile)
+
         self.player = Player(cx, cy, 'player', pics['player'])
         self.add(self.player, z=z)
         z += 1
