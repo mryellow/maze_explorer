@@ -295,7 +295,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
             # Keep state of sensed range
             sensor.proximity = dis
 
-            # FIXME: Only draw lines if UI is visible
+            # TODO: Decouple into view rendering
             end = newPos.copy()
             end.x += math.sin(rad) * dis;
             end.y += math.cos(rad) * dis;
@@ -345,6 +345,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
                 self.player.stats['reward'] += self.player.rewards['explore']
                 self.player.stats['score'] += self.player.rewards['explore']
 
+                # TODO: Decouple into view rendering
                 # Change colour of visited cells
                 key = layer.get_key_at_pixel(cell.x, cell.y)
                 #layer.set_cell_color(key[0], key[1], [155,155,155])
