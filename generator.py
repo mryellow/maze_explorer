@@ -15,13 +15,13 @@ class Generator():
         template = ti.load(os.path.join(script_dir, 'template.tmx'))['map0']
         template.set_view(0, 0, template.px_width, template.px_height)
 
+        # TODO: Save the generated map.
         #epoch = int(time.time())
         #filename = 'map_' + str(epoch) + '.tmx'
 
         # Start within borders
         self.recursive_division(template.cells, 3, (template.px_width/template.tw)-1, (template.px_height/template.th)-1, 0, 0)
 
-        #return ti.load(os.path.join(script_dir, 'logs', filename))['map0']
         return template
 
     def recursive_division(self, cells, min_size, width, height, x=0, y=0, depth=0):
