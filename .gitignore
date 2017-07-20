@@ -1,4 +1,5 @@
 *.egg-info/
+/agents
 /logs
 *.pyc
 .idea
