@@ -25,6 +25,14 @@ class Generator():
         return template
 
     def recursive_division(self, cells, min_size, width, height, x=0, y=0, depth=0):
+        assert isinstance(cells, list)
+        assert isinstance(min_size, int) or isinstance(min_size, float)
+        assert isinstance(width, int) or isinstance(width, float)
+        assert isinstance(height, int) or isinstance(height, float)
+        assert isinstance(x, int) or isinstance(x, float)
+        assert isinstance(y, int) or isinstance(y, float)
+        assert isinstance(depth, int)
+
         if width <= min_size or height <= min_size:
             return
 

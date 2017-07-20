@@ -154,6 +154,7 @@ class Player(cocos.sprite.Sprite):
             remaining_dt -= consumed_dt
 
         # Upper left corner of Rect
+        # FIXME: Use top, left
         newPos.x -= self.cshape.r
         newPos.y -= self.cshape.r
 
@@ -163,4 +164,5 @@ class Player(cocos.sprite.Sprite):
         ppos = self.cshape.center
         r = self.cshape.r
 
+        # FIXME: Use top, bottom, left, right
         return Rect(ppos.x-r, ppos.y-r, r*2, r*2)
