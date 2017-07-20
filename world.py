@@ -282,8 +282,9 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         #    print('Battery empty')
             self.player.game_over = True
 
-        #if self.player.game_over:
-        #    print('Game Over')
+        if self.player.game_over:
+            self.player.stats['reward'] += self.player.rewards['terminal']
+            #print('Game Over', self.player.stats['reward'])
 
         # Check path for each sensor
 
@@ -342,8 +343,8 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
                 cell.properties['visited'] = True
 
                 # Adjust next reward for exploration
-                self.player.stats['reward'] += self.player.reward_explore
-                self.player.stats['score'] += self.player.reward_explore
+                self.player.stats['reward'] += self.player.rewards['explore']
+                self.player.stats['score'] += self.player.rewards['explore']
 
                 # Change colour of visited cells
                 key = layer.get_key_at_pixel(cell.x, cell.y)

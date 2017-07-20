@@ -55,7 +55,7 @@ class Player(cocos.sprite.Sprite):
 
         self.game_over = False
         self.battery_use = settings['battery_use']
-        self.reward_explore = settings['reward']['explore']
+        self.rewards = settings['rewards']
 
         self.stats = {
             "battery": 100,

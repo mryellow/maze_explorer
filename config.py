@@ -25,8 +25,9 @@ settings = {
             "angular": 0.09,
             "linear": 0.10
         },
-        "reward": {
-            "explore": 1.0
+        "rewards": {
+            "explore": 1.0,
+            "terminal": -10.0
         },
         "sensors": {
             "num": 9,
