@@ -37,6 +37,8 @@ settings = {
     "world": {
         "width": tile_size * tiles_x,
         "height": tile_size * tiles_y,
+        "tiles_x": tiles_x,
+        "tiles_y": tiles_x,
         #"wall_scale_min": 0.75,  # relative to player
         #"wall_scale_max": 2.25,  # relative to player
         "bindings": {
