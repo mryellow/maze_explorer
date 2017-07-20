@@ -20,7 +20,7 @@ class ScoreLayer(cocos.layer.Layer):
         }
 
         w, h = config.settings['window']['width'], config.settings['window']['height']
-        lineheight = 20
+        lineheight = 15
         offset_x = -lineheight
         offset_y = lineheight
 
@@ -31,7 +31,7 @@ class ScoreLayer(cocos.layer.Layer):
             msg = cocos.text.Label(self.labels[key] + str_val,
                                     bold=True,
                                     color=(255, 50, 0, 255),
-                                    font_size=18,
+                                    font_size=12,
                                     font_name=config.settings['view']['font_name'],
                                     anchor_y='top',
                                     anchor_x='right',
@@ -43,7 +43,7 @@ class ScoreLayer(cocos.layer.Layer):
             shad = cocos.text.Label(self.labels[key] + str_val,
                                     bold=True,
                                     color=(0, 0, 0, 255),
-                                    font_size=18,
+                                    font_size=12,
                                     font_name=config.settings['view']['font_name'],
                                     anchor_y='top',
                                     anchor_x='right',
