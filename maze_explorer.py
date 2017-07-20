@@ -54,7 +54,7 @@ class MazeExplorer():
         Take one action for one step
         """
         assert isinstance(action, int)
-        #assert self.action_space.contains(action), "%r (%s) invalid"%(action, type(action))
+        assert action < self.actions_num, "%r (%s) invalid"%(action, type(action))
 
         # Reset other buttons
         for k in self.world_layer.buttons:
@@ -68,11 +68,16 @@ class MazeExplorer():
         # Act in the environment
         self.step()
 
+        # Create observation from sensor proximities
+        observation = [o.proximity_norm() for o in self.world_layer.player.sensors]
+        # Include battery level in state
+        observation.append(self.world_layer.player.stats['battery']/100)
+
         # Return reward and reset for next step
         reward = self.world_layer.player.stats['reward']
         self.world_layer.player.stats['reward'] = 0
 
-        return reward
+        return observation, reward
 
     def step(self):
         """

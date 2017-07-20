@@ -291,6 +291,8 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         # Out of battery, set terminal state
         if self.player.stats['battery'] < 0:
         #    print('Battery empty')
+            self.player.stats['battery'] = 0
+            # TODO: Let agent keep playing in hopes of finding end-goal
             self.player.game_over = True
 
         if self.player.game_over:

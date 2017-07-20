@@ -19,8 +19,8 @@ def main(argv):
         engine.create_scene()
 
         while not engine.director.window.has_exit:
-            action = randint(0, engine.actions_num)
-            reward = engine.act(action)
+            action = randint(0, engine.actions_num-1)
+            observation, reward = engine.act(action)
             print(action, reward)
     elif '-s' in argv or '--step' in argv:
         print('Step by step...')
