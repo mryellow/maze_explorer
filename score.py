@@ -6,8 +6,8 @@ class ScoreLayer(cocos.layer.Layer):
 
     """Score overlay
 
-    Responsability:
-    display score and battery
+    Responsabilities:
+        display score and battery
     """
     def __init__(self, stats=None):
         super(ScoreLayer, self).__init__()
@@ -61,6 +61,11 @@ class ScoreLayer(cocos.layer.Layer):
         self.schedule(self.update)
 
     def update(self, dt):
+        """
+        Responsabilities:
+            Updates game engine each tick
+            Copies new stats into labels
+        """
         for key, value in self.labels.iteritems():
             str_val = str(int(self.stats[key]))
             self.msgs[key][0].element.text = self.labels[key] + str_val

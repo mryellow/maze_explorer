@@ -29,6 +29,9 @@ class MazeExplorer():
         self.observation_num = config.settings['player']['sensors']['num'] + 1
 
     def create_scene(self):
+        """
+        Attach a new engine to director
+        """
         self.scene = cocos.scene.Scene()
         self.z = 0
 
@@ -47,6 +50,9 @@ class MazeExplorer():
         self.director._set_scene(self.scene)
 
     def act(self, action):
+        """
+        Take one action for one step
+        """
         assert isinstance(action, int)
         #assert self.action_space.contains(action), "%r (%s) invalid"%(action, type(action))
 
@@ -69,6 +75,9 @@ class MazeExplorer():
         return reward
 
     def step(self):
+        """
+        Step the engine one tick
+        """
         self.director.window.switch_to()
         self.director.window.dispatch_events()
         self.director.window.dispatch_event('on_draw')
@@ -84,5 +93,8 @@ class MazeExplorer():
         #    window.flip()
 
     def run(self):
+        """
+        Run in real-time
+        """
         self.create_scene()
         return self.director.run(self.scene)

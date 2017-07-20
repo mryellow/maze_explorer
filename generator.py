@@ -12,6 +12,9 @@ VERTICAL = 1
 
 class Generator():
     def map(self):
+        """
+        Creates and returns a new randomly generated map
+        """
         template = ti.load(os.path.join(script_dir, 'template.tmx'))['map0']
         template.set_view(0, 0, template.px_width, template.px_height)
 
@@ -25,6 +28,13 @@ class Generator():
         return template
 
     def recursive_division(self, cells, min_size, width, height, x=0, y=0, depth=0):
+        """
+        Recursive division:
+            1. Split room randomly
+                1a. Dodge towards larger half if in doorway
+            2. Place doorway randomly
+            3. Repeat for each half
+        """
         assert isinstance(cells, list)
         assert isinstance(min_size, int) or isinstance(min_size, float)
         assert isinstance(width, int) or isinstance(width, float)

@@ -118,12 +118,9 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         #    self.player.reset()
 
     def generate_random_level(self):
-        # hardcoded params:
-        #food_num = 5
-        #food_scale = 1.0  # relative to player
-        #wall_num = 10
-        #gate_scale = 1.5  # relative to player
-        #min_separation_rel = 3.0  # as fraction of player diameter
+        """
+        Configure and add cocos layers
+        """
 
         # build !
         width = self.width
@@ -233,6 +230,9 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         #        cntTrys += 1
 
     def update(self, dt):
+        """
+        Updates game engine each tick
+        """
         # if not playing dont update model
         if self.win_status != 'undecided':
             return
@@ -334,6 +334,9 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
     #    self.toRemove.clear()
 
     def update_visited(self, pos):
+        """
+        Updates exploration map visited status
+        """
         assert isinstance(pos, eu.Vector2)
 
         # Helper function
@@ -364,6 +367,10 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
     # Find line intersects next tile
     def distance_to_tile(self, point, direction, length = 50):
+        """
+        Find nearest wall on a given bearing.
+        Used for agent wall sensors.
+        """
         assert isinstance(point, eu.Vector2)
         assert isinstance(direction, int) or isinstance(direction, float)
         assert isinstance(length, int) or isinstance(length, float)

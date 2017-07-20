@@ -26,6 +26,11 @@ class Sensor():
 
 class Player(cocos.sprite.Sprite):
     palette = {}  # injected later
+    """Player
+
+    Responsabilities:
+        Keeps state information for player
+    """
 
     def __init__(self, cx, cy, btype, img, velocity=None):
         super(Player, self).__init__(img)
@@ -84,8 +89,10 @@ class Player(cocos.sprite.Sprite):
         self.position = world_to_view(cshape_center)
         self.cshape.center = cshape_center
 
-    # Update rotation and return impulse direction
     def update_rotation(self, dt, buttons):
+        """
+        Updates rotation and impulse direction
+        """
         assert isinstance(buttons, dict)
 
         ma = buttons['right'] - buttons['left']
@@ -93,11 +100,14 @@ class Player(cocos.sprite.Sprite):
             self.stats['battery'] -= self.battery_use['angular']
             self.rotation += ma * dt * self.angular_velocity
 
+        # Redirect velocity in new direction
         a = math.radians(self.rotation)
         self.impulse_dir = eu.Vector2(math.sin(a), math.cos(a))
 
-    # Plan a new move; return Rects for start/finish positions and velocity.
     def get_move(self, dt, buttons):
+        """
+        Updates velocity and returns Rects for start/finish positions
+        """
         assert isinstance(dt, int) or isinstance(dt, float)
         assert isinstance(buttons, dict)
 
@@ -125,6 +135,9 @@ class Player(cocos.sprite.Sprite):
         return oldRect, newRect, newVel
 
     def get_destination(self, dt, velocity):
+        """
+        Apply velocity and return new position
+        """
         assert isinstance(velocity, eu.Vector2)
 
         oldPos = self.cshape.center
