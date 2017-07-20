@@ -23,7 +23,7 @@ class Sensor():
         self.line = None
 
     def proximity_norm(self):
-        return self.proximity / self.max_range
+        return max(0, min(self.proximity / self.max_range, self.max_range))
 
 class Player(cocos.sprite.Sprite):
     palette = {}  # injected later

@@ -33,7 +33,7 @@ settings = {
         "sensors": {
             "num": 9,
             "fov": 15*math.pi/180,
-            "max_range": 100
+            "max_range": 200 / 4
         }
     },
     "world": {
