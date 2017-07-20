@@ -17,7 +17,7 @@ settings = {
     },
     "player": {
         "radius": tile_size / 4,
-        "top_speed": 50.0,
+        "top_speed": 50.0 / 4,
         "angular_velocity": 240.0,  # degrees / s
         "accel": 85.0,
         "deaccel": 5.0,
