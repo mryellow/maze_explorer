@@ -1,4 +1,5 @@
 import cocos
+import cocos.actions as ac
 
 import config
 
@@ -12,7 +13,7 @@ class MessageLayer(cocos.layer.Layer):
     """
 
     def show_message(self, msg, callback=None):
-        w, h = director.get_window_size()
+        w, h = config.settings['window']['width'], config.settings['window']['height']
 
         self.msg = cocos.text.Label(msg,
                                     font_size=52,

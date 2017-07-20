@@ -91,6 +91,19 @@ class Player(cocos.sprite.Sprite):
         self.position = world_to_view(cshape_center)
         self.cshape.center = cshape_center
 
+    def update_terminal(self):
+        """
+        Check terminal conditions
+        """
+        # Out of battery, set terminal state
+        if self.stats['battery'] < 0:
+            self.stats['battery'] = 0
+            # TODO: Let agent keep playing in hopes of finding end-goal
+            self.game_over = True
+
+        if self.game_over:
+            self.stats['reward'] += self.rewards['terminal']
+
     def update_rotation(self, dt, buttons):
         """
         Updates rotation and impulse direction
@@ -106,7 +119,7 @@ class Player(cocos.sprite.Sprite):
         a = math.radians(self.rotation)
         self.impulse_dir = eu.Vector2(math.sin(a), math.cos(a))
 
-    def get_move(self, dt, buttons):
+    def do_move(self, dt, buttons):
         """
         Updates velocity and returns Rects for start/finish positions
         """

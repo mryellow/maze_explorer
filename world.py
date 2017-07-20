@@ -253,7 +253,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         self.player.update_rotation(dt, self.buttons)
 
         # Get planned update
-        oldRect, newRect, newVel = self.player.get_move(dt, self.buttons)
+        oldRect, newRect, newVel = self.player.do_move(dt, self.buttons)
 
         # Update planned velocity to avoid collisions
         # modifies `newRect` to be the nearest rect ... still outside any `map_layer` object.
@@ -283,43 +283,15 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
         self.player.velocity = newVel
         self.player.update_center(newPos)
+        self.player.update_terminal()
 
+        # TODO: Display messages for humans at some point
+        #if self.player.game_over:
+        #    self.level_losed()
+
+        # In WorldLayer so we can access map
         self.update_visited(newPos)
-
-        #print(self.player.stats)
-
-        # Out of battery, set terminal state
-        if self.player.stats['battery'] < 0:
-        #    print('Battery empty')
-            self.player.stats['battery'] = 0
-            # TODO: Let agent keep playing in hopes of finding end-goal
-            self.player.game_over = True
-
-        if self.player.game_over:
-            self.player.stats['reward'] += self.player.rewards['terminal']
-            #print('Game Over', self.player.stats['reward'])
-
-        # Check path for each sensor
-
-        a = math.radians(self.player.rotation)
-        for sensor in self.player.sensors:
-            rad = a + sensor.angle
-            dis = min(self.distance_to_tile(newPos, rad), sensor.max_range)
-
-            # Keep state of sensed range
-            sensor.proximity = dis
-
-            # Redirect sensor lines
-            # TODO: Decouple into view rendering
-            a = math.radians(self.player.rotation)
-            for sensor in self.player.sensors:
-                rad = a + sensor.angle
-                start = self.player.cshape.center
-                end = start.copy()
-                end.x += math.sin(rad) * sensor.proximity;
-                end.y += math.cos(rad) * sensor.proximity;
-                sensor.line.start = start
-                sensor.line.end = end
+        self.update_sensors(newPos)
 
         # update collman
         #self.collman.clear()
@@ -384,7 +356,28 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
                 neighbour = neighbours[cell]
                 set_visited(self.visit_layer, neighbour)
 
-    # Find line intersects next tile
+    def update_sensors(self, pos):
+        """
+        Check path for each sensor and record wall proximity
+        """
+        assert isinstance(pos, eu.Vector2)
+
+        a = math.radians(self.player.rotation)
+        for sensor in self.player.sensors:
+            rad = a + sensor.angle
+            dis = min(self.distance_to_tile(pos, rad), sensor.max_range)
+
+            # Keep state of sensed range
+            sensor.proximity = dis
+
+            # Redirect sensor lines
+            # TODO: Decouple into view rendering
+            end = pos.copy()
+            end.x += math.sin(rad) * dis
+            end.y += math.cos(rad) * dis
+            sensor.line.start = pos
+            sensor.line.end = end
+
     def distance_to_tile(self, point, direction, length = 50):
         """
         Find nearest wall on a given bearing.

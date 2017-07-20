@@ -27,7 +27,7 @@ settings = {
         },
         "rewards": {
             "explore": 1.0,
-            "terminal": -10.0,
+            "terminal": -10.0, # TODO: -100?
             "goal": 100
         },
         "sensors": {
