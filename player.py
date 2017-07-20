@@ -20,6 +20,7 @@ class Sensor():
         self.angle = angle
         self.max_range = max_range
         self.proximity = self.max_range
+        self.line = None
 
     def proximity_norm(self):
         return self.proximity / self.max_range
@@ -72,6 +73,7 @@ class Player(cocos.sprite.Sprite):
         sensor_fov = settings['sensors']['fov']
         sensor_max = settings['sensors']['max_range']
 
+        # Create sensors
         self.sensors = []
         for i in xrange(0, sensor_num):
             rad = (i-((sensor_num)/2))*sensor_fov;

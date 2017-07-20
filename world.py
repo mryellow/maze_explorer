@@ -173,6 +173,18 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         self.add(self.score, z=z)
         z += 1
 
+        # Draw sensors
+        # TODO: Decouple into view rendering
+        a = math.radians(self.player.rotation)
+        for sensor in self.player.sensors:
+            rad = a + sensor.angle
+            start = self.player.cshape.center
+            end = start.copy()
+            end.x += math.sin(rad) * sensor.proximity;
+            end.y += math.cos(rad) * sensor.proximity;
+            sensor.line = draw.Line(start, end, (50,50,100,200))
+            self.map_layer.add(sensor.line)
+
         #self.collman.add(self.map_layer)
         #self.collman.add(self.player)
 
@@ -295,12 +307,17 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
             # Keep state of sensed range
             sensor.proximity = dis
 
+            # Redirect sensor lines
             # TODO: Decouple into view rendering
-            end = newPos.copy()
-            end.x += math.sin(rad) * dis;
-            end.y += math.cos(rad) * dis;
-            line = draw.Line(newPos, end, (50,50,100,10))
-            self.map_layer.add(line)
+            a = math.radians(self.player.rotation)
+            for sensor in self.player.sensors:
+                rad = a + sensor.angle
+                start = self.player.cshape.center
+                end = start.copy()
+                end.x += math.sin(rad) * sensor.proximity;
+                end.y += math.cos(rad) * sensor.proximity;
+                sensor.line.start = start
+                sensor.line.end = end
 
         # update collman
         #self.collman.clear()
