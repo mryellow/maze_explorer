@@ -12,7 +12,7 @@ class WorldQueries():
     """
 
     def __init__(self):
-        super(Queries, self).__init__()
+        super(WorldQueries, self).__init__()
 
     def distance_to_tile(self, point, direction, length = 50):
         """

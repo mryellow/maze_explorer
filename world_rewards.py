@@ -10,7 +10,7 @@ class WorldRewards():
     """
 
     def __init__(self):
-        super(Rewards, self).__init__()
+        super(WorldRewards, self).__init__()
 
     # Reward functions implementing game modes
     def reward_collision(self):
