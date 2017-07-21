@@ -26,7 +26,7 @@ settings = {
             "linear": 0.01
         },
         "rewards": {
-            "collision": -10.0
+            "collision": -10.0,
             "explore": 1.0,
             "terminal": 0.0,
             "goal": 100.0

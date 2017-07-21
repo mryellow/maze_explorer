@@ -16,11 +16,12 @@ import config
 from player import Player
 from generator import Generator
 from score import ScoreLayer
+from rewards import Rewards
 
 import os
 script_dir = os.path.dirname(__file__)
 
-class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
+class WorldLayer(cocos.layer.Layer, mc.RectMapCollider, Rewards):
 
     """
     Responsabilities:
@@ -498,52 +499,6 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
         # Start at `point`, check tile under each pixel
         return search_grid(point, direction)
-
-    # Reward functions implementing game modes
-    def reward_collision(self):
-        """
-        Add a wall collision reward
-        """
-        assert isinstance(self.player, Player)
-
-        #self.logger.info("Bump {x}/{y}'".format(x=self.bumped_x, y=self.bumped_y))
-        if self.mode == 0:
-            self.player.stats['reward'] += self.player.rewards['collision']
-            # Wall collisions end the episode in mode 0
-            self.player.game_over = True
-
-    def reward_explore(self):
-        """
-        Add an exploration reward
-        """
-        assert isinstance(self.player, Player)
-
-        if self.mode == 0:
-            if self.player.stats['battery'] > 50:
-                self.player.stats['reward'] += self.player.rewards['explore']
-                self.player.stats['score'] += self.player.rewards['explore']
-
-    def reward_goal(self):
-        """
-        Add an end goal reward
-        """
-        assert isinstance(self.player, Player)
-
-        if self.mode == 0:
-            if self.player.stats['battery'] <= 50:
-                self.logger.info("Escaped!!")
-                self.player.stats['reward'] += self.player.rewards['goal']
-                self.player.game_over = True
-
-    def reward_terminal(self):
-        """
-        Add a terminal reward
-        """
-        assert isinstance(self.player, Player)
-        assert self.player.game_over
-
-        if self.mode == 0:
-            self.player.stats['reward'] += self.player.rewards['terminal']
 
     #def open_gate(self):
     #    self.gate.color = Player.palette['gate']
