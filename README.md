@@ -7,6 +7,7 @@ A maze exploration game for AI agents.
 ## TODO:
 
 * [ ] New game modes
+* [ ] Do we need to go 1px further in `distance_to_tile`?
 
 ## Installation
 
