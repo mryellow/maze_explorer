@@ -7,7 +7,7 @@ setup(name='maze_explorer',
       author_email='mr-yellow@mr-yellow.com',
       description='A maze exploration game engine',
       packages=find_packages(),
-      url='',
+      url='https://github.com/mryellow/maze_explorer',
       license='MIT',
       install_requires=['cocos2d', 'pyglet']
 )
