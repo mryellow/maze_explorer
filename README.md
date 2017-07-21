@@ -30,7 +30,7 @@ pip install maze_explorer
 
 ### Options
 
-```
+```bash
 --random # Execute random actions step-by-step via `act`
 --step # Call the engine step-by-step via `step`
 ```
