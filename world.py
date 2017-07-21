@@ -1,3 +1,6 @@
+import logging
+logging.basicConfig()
+
 import math
 from random import randint
 
@@ -31,6 +34,10 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
     def __init__(self, mode=0, fn_show_message=None):
         super(WorldLayer, self).__init__()
+
+        self.logger = logging.getLogger(__name__)
+        # TODO: Configurable log level
+        self.logger.setLevel(logging.INFO)
 
         self.mode = mode
         self.fn_show_message = fn_show_message
@@ -281,6 +288,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         # Collision detected
         if self.bumped_x or self.bumped_y:
             #print("Bumped", newVel, self.bumped_x, self.bumped_y)
+            self.logger.info("Bump {x}/{y}'".format(x=self.bumped_x, y=self.bumped_y))
             self.player.game_over = True
 
         self.player.velocity = newVel
@@ -513,6 +521,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
         if self.mode == 0:
             if self.player.stats['battery'] <= 50:
+                self.logger.info("Escaped!!")
                 self.player.stats['reward'] += self.player.rewards['goal']
                 self.player.game_over = True
 
