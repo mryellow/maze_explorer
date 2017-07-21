@@ -3,9 +3,9 @@ import cocos.collision_model as cm
 
 import config
 
-class WorldCollisions(object):
+class WorldItems(object):
     """
-    WorldCollisions
+    WorldItems
 
     Methods inherited by WorldLayer
     Has context for game settings, map state and player state
@@ -15,7 +15,7 @@ class WorldCollisions(object):
     """
 
     def __init__(self):
-        super(WorldCollisions, self).__init__()
+        super(WorldItems, self).__init__()
 
         player = config.settings['player']
         world = config.settings['world']

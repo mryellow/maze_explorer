@@ -16,14 +16,14 @@ import config
 from player import Player
 from generator import Generator
 from score import ScoreLayer
-from world_collisions import WorldCollisions
+from world_items import WorldItems
 from world_queries import WorldQueries
 from world_rewards import WorldRewards
 
 import os
 script_dir = os.path.dirname(__file__)
 
-class WorldLayer(WorldCollisions, WorldQueries, WorldRewards, cocos.layer.Layer, mc.RectMapCollider):
+class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.RectMapCollider):
 
     """
     WorldLayer
