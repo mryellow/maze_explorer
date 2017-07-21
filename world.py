@@ -41,7 +41,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider, WorldQueries, WorldRewar
 
         self.logger = logging.getLogger(__name__)
         # TODO: Configurable log level
-        self.logger.setLevel(logging.INFO)
+        self.logger.setLevel(config.settings['log_level'])
 
         self.mode = mode
         self.fn_show_message = fn_show_message

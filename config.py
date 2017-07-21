@@ -1,4 +1,5 @@
 import math
+import logging
 
 import pyglet
 from pyglet.window import key
@@ -9,6 +10,7 @@ tiles_y = 50
 
 #fe = 1.0e-4
 settings = {
+    "log_level": logging.INFO,
     "window": {
         "width": 500,
         "height": 500,
