@@ -21,7 +21,7 @@ class Generator():
         """
         Creates and returns a new randomly generated map
         """
-        template = ti.load(os.path.join(script_dir, 'template.tmx'))['map0']
+        template = ti.load(os.path.join(script_dir, 'assets', 'template.tmx'))['map0']
         template.set_view(0, 0, template.px_width, template.px_height)
 
         # TODO: Save the generated map.

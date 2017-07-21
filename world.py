@@ -26,7 +26,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider, Queries, Rewards):
 
     """
     WorldLayer
-    
+
     Responsabilities:
         Generation: random generates a level
         Initial State: Set initial playststate
@@ -62,7 +62,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider, Queries, Rewards):
         # load resources:
         pics = {}
         #pics["player"] = pyglet.resource.image('player7.png')
-        pics["player"] = pyglet.image.load(os.path.join(script_dir, 'player7.png'))
+        pics["player"] = pyglet.image.load(os.path.join(script_dir, 'assets', 'player7.png'))
 
         #pics["food"] = pyglet.resource.image('circle6.png')
         #pics["wall"] = pyglet.resource.image('circle6.png')
@@ -154,7 +154,8 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider, Queries, Rewards):
         z += 1
 
         # add floor
-        self.visit_layer = ti.load(os.path.join(script_dir, 'ones.tmx'))['map0']
+        # TODO: Move to `Generator.inverse(map)`
+        self.visit_layer = ti.load(os.path.join(script_dir, 'assets', 'ones.tmx'))['map0']
         for i in xrange(0, len(self.map_layer.cells)):
             for j in xrange(0, len(self.map_layer.cells[i])):
                 col = self.map_layer.cells[i][j]
