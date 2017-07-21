@@ -3,9 +3,9 @@ import math
 import cocos
 import cocos.euclid as eu
 
-class Queries():
+class WorldQueries():
     """
-    Queries
+    WorldQueries
 
     Methods for querying map inherited by WorldLayer
     Has context for game settings, map state and player state

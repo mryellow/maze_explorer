@@ -15,14 +15,14 @@ from cocos import draw
 import config
 from player import Player
 from generator import Generator
-from queries import Queries
 from score import ScoreLayer
-from rewards import Rewards
+from world_queries import WorldQueries
+from world_rewards import WorldRewards
 
 import os
 script_dir = os.path.dirname(__file__)
 
-class WorldLayer(cocos.layer.Layer, mc.RectMapCollider, Queries, Rewards):
+class WorldLayer(cocos.layer.Layer, mc.RectMapCollider, WorldQueries, WorldRewards):
 
     """
     WorldLayer

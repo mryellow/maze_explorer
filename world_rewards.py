@@ -1,6 +1,6 @@
-class Rewards():
+class WorldRewards():
     """
-    Rewards
+    WorldRewards
 
     Methods inherited by WorldLayer
     Has context for game settings, map state and player state
