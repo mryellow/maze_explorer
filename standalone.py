@@ -25,8 +25,8 @@ def main(argv):
     elif '-s' in argv or '--step' in argv:
         print('Step by step...')
         engine.create_scene()
-        #while not engine.director.window.has_exit:
-            #engine.step()
+        while not engine.director.window.has_exit:
+            engine.step()
     else:
         engine.run()
 
