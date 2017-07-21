@@ -16,8 +16,10 @@ class MazeExplorer():
     Wrapper for game engine
     """
 
-    def __init__(self, visible = True):
+    def __init__(self, mode=0, visible = True):
         config.settings['window']['visible'] = visible
+
+        self.mode = mode
 
         self.director = director
         self.director.init(**config.settings['window'])
@@ -43,7 +45,7 @@ class MazeExplorer():
         message_layer = MessageLayer()
         self.scene.add(message_layer, z=self.z)
         self.z += 1
-        self.world_layer = WorldLayer(fn_show_message=message_layer.show_message)
+        self.world_layer = WorldLayer(self.mode, fn_show_message=message_layer.show_message)
         self.scene.add(self.world_layer, z=self.z)
         self.z += 1
 

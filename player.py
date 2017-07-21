@@ -121,9 +121,6 @@ class Player(cocos.sprite.Sprite):
             # TODO: Let agent keep playing in hopes of finding end-goal
             #self.game_over = True
 
-        if self.game_over:
-            self.stats['reward'] += self.rewards['terminal']
-
     def update_rotation(self, dt, buttons):
         """
         Updates rotation and impulse direction

@@ -29,8 +29,10 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
     """
     is_event_handler = True
 
-    def __init__(self, fn_show_message=None):
+    def __init__(self, mode=0, fn_show_message=None):
         super(WorldLayer, self).__init__()
+
+        self.mode = mode
         self.fn_show_message = fn_show_message
 
         # basic geometry
@@ -285,6 +287,11 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         self.player.update_center(newPos)
         self.player.update_terminal()
 
+        # Negative terminal reward check
+        # Before game ending goal reward in `update_vistied`
+        if self.player.game_over:
+            self.reward_terminal()
+
         # In WorldLayer so we can access map
         self.update_visited(newPos)
         self.update_sensors(newPos)
@@ -335,9 +342,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
             if cell and not cell.properties.get('visited') and cell.tile and cell.tile.id > 0:
                 cell.properties['visited'] = True
 
-                # Adjust next reward for exploration
-                self.player.stats['reward'] += self.player.rewards['explore']
-                self.player.stats['score'] += self.player.rewards['explore']
+                self.reward_explore()
 
                 # TODO: Decouple into view rendering
                 # Change colour of visited cells
@@ -350,20 +355,17 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         current = self.visit_layer.get_at_pixel(pos.x, pos.y)
 
         if current:
-            # Escaped!!
-            if self.player.stats['battery'] <= 50 and \
-                current == self.visit_layer.get_at_pixel(self.spawn.x, self.spawn.y):
-                print('Escaped!!')
-                self.player.stats['reward'] += self.player.rewards['goal']
-                self.player.game_over = True
+            # In spawn square
+            if current == self.visit_layer.get_at_pixel(self.spawn.x, self.spawn.y):
+                self.reward_goal()
 
             # Only record/reward exploration when battery is above 50%
-            if self.player.stats['battery'] > 50:
-                set_visited(self.visit_layer, current)
-                neighbours = self.visit_layer.get_neighbors(current)
-                for cell in neighbours:
-                    neighbour = neighbours[cell]
-                    set_visited(self.visit_layer, neighbour)
+            #if self.player.stats['battery'] > 50:
+            set_visited(self.visit_layer, current)
+            neighbours = self.visit_layer.get_neighbors(current)
+            for cell in neighbours:
+                neighbour = neighbours[cell]
+                set_visited(self.visit_layer, neighbour)
 
     def update_sensors(self, pos):
         """
@@ -490,6 +492,39 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
         # Start at `point`, check tile under each pixel
         return search_grid(point, direction)
+
+    # Reward functions implementing game modes
+    def reward_explore(self):
+        """
+        Add an exploration reward
+        """
+        assert isinstance(self.player, Player)
+
+        if self.mode == 0:
+            if self.player.stats['battery'] > 50:
+                self.player.stats['reward'] += self.player.rewards['explore']
+                self.player.stats['score'] += self.player.rewards['explore']
+
+    def reward_goal(self):
+        """
+        Add an end goal reward
+        """
+        assert isinstance(self.player, Player)
+
+        if self.mode == 0:
+            if self.player.stats['battery'] <= 50:
+                self.player.stats['reward'] += self.player.rewards['goal']
+                self.player.game_over = True
+
+    def reward_terminal(self):
+        """
+        Add a terminal reward
+        """
+        assert isinstance(self.player, Player)
+        assert self.player.game_over
+
+        if self.mode == 0:
+            self.player.stats['reward'] += self.player.rewards['terminal']
 
     #def open_gate(self):
     #    self.gate.color = Player.palette['gate']
