@@ -8,6 +8,12 @@ A maze exploration game for AI agents.
 
 * [ ] New game modes
 
+## Installation
+
+```bash
+pip install maze_explorer
+```
+
 ## Standalone
 
 `python standalone.py`
