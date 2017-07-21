@@ -69,7 +69,8 @@ settings = {
             'player': (237, 27, 36),
             'wall': (247, 148, 29),
             'gate': (140, 198, 62),
-            'food': (140, 198, 62)
+            'food': (140, 198, 62),
+            'poison': (198, 62, 62)
         }
     }
 }
@@ -82,4 +83,5 @@ scale_y = settings["window"]["height"] / settings["world"]["height"]
 pics = {
     "player": pyglet.image.load(os.path.join(script_dir, 'assets', 'player7.png')),
     "food": pyglet.image.load(os.path.join(script_dir, 'assets', 'circle6.png')),
+    "poison": pyglet.image.load(os.path.join(script_dir, 'assets', 'circle6.png'))
 }

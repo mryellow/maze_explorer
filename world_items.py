@@ -54,6 +54,11 @@ class WorldItems(object):
             for i in range(item_num):
                 self.add_item(radius, item_type)
 
+            item_num = 50
+            item_type = 'poison'
+            for i in range(item_num):
+                self.add_item(radius, item_type)
+
             # add gate
             #rGate = gate_scale * rPlayer
             #self.gate = Player(cx, cy, rGate, 'gate', pics['wall'])
@@ -136,7 +141,8 @@ class WorldItems(object):
                 typeball = other.btype
                 self.logger.debug('collision', typeball)
 
-                if typeball == 'food':
+                # TODO: Could flag items as removable and others not
+                if typeball == 'food' or typeball == 'poison':
                     self.to_remove.append(other)
                     self.reward_item(typeball)
 
