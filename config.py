@@ -26,9 +26,10 @@ settings = {
             "linear": 0.01
         },
         "rewards": {
+            "collision": -10.0
             "explore": 1.0,
-            "terminal": -10.0, # TODO: -100?
-            "goal": 100
+            "terminal": 0.0,
+            "goal": 100.0
         },
         "sensors": {
             "num": 9,

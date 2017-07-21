@@ -287,9 +287,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
 
         # Collision detected
         if self.bumped_x or self.bumped_y:
-            #print("Bumped", newVel, self.bumped_x, self.bumped_y)
-            self.logger.info("Bump {x}/{y}'".format(x=self.bumped_x, y=self.bumped_y))
-            self.player.game_over = True
+            self.reward_collision()
 
         self.player.velocity = newVel
         self.player.update_center(newPos)
@@ -502,6 +500,18 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider):
         return search_grid(point, direction)
 
     # Reward functions implementing game modes
+    def reward_collision(self):
+        """
+        Add a wall collision reward
+        """
+        assert isinstance(self.player, Player)
+
+        #self.logger.info("Bump {x}/{y}'".format(x=self.bumped_x, y=self.bumped_y))
+        if self.mode == 0:
+            self.player.stats['reward'] += self.player.rewards['collision']
+            # Wall collisions end the episode in mode 0
+            self.player.game_over = True
+
     def reward_explore(self):
         """
         Add an exploration reward
