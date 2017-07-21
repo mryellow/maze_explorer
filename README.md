@@ -10,6 +10,16 @@ A maze exploration game for AI agents.
 
 ## Installation
 
+### Source
+
+```bash
+git clone https://github.com/mryellow/maze_explorer.git
+cd maze_explorer
+pip install -e .
+```
+
+### Package
+
 ```bash
 pip install maze_explorer
 ```
