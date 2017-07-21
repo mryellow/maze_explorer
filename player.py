@@ -1,9 +1,10 @@
 import math
 
 import cocos
-import cocos.collision_model as cm
 import cocos.euclid as eu
 from cocos.rect import Rect
+
+from collidable import Collidable
 
 import config
 
@@ -25,8 +26,7 @@ class Sensor():
     def proximity_norm(self):
         return max(0, min(self.proximity / self.max_range, self.max_range))
 
-class Player(cocos.sprite.Sprite):
-    palette = {}  # injected later
+class Player(Collidable):
     """
     Player
 
@@ -35,20 +35,11 @@ class Player(cocos.sprite.Sprite):
     """
 
     def __init__(self, cx, cy, btype, img, velocity=None):
-        super(Player, self).__init__(img)
+        super(Player, self).__init__(cx, cy, btype, img)
 
         settings = config.settings['player']
         palette = config.settings['view']['palette']
-        self.palette = palette
 
-        self.radius = settings['radius']
-        # the 1.05 so that visual radius a bit greater than collision radius
-        # FIXME: Both `scale_x` and `scale_y`
-        self.scale = (self.radius * 1.05) * config.scale_x / (self.image.width / 2.0)
-        self.btype = btype
-        self.color = self.palette[btype]
-        self.cshape = cm.CircleShape(eu.Vector2(cx, cy), self.radius)
-        self.update_center(self.cshape.center)
         if velocity is None:
             velocity = eu.Vector2(0.0, 0.0)
         self.velocity = velocity
@@ -101,16 +92,6 @@ class Player(cocos.sprite.Sprite):
         observation.append(self.stats['battery']/100)
 
         return observation
-
-    #def reset(self):
-    #    self.impulse_dir = eu.Vector2(0.0, 1.0)
-
-    def update_center(self, cshape_center):
-        """cshape_center must be eu.Vector2"""
-        assert isinstance(cshape_center, eu.Vector2)
-
-        self.position = world_to_view(cshape_center)
-        self.cshape.center = cshape_center
 
     def update_terminal(self):
         """
@@ -205,10 +186,3 @@ class Player(cocos.sprite.Sprite):
         newPos.y -= self.cshape.r
 
         return newPos
-
-    def get_rect(self):
-        ppos = self.cshape.center
-        r = self.cshape.r
-
-        # FIXME: Use top, bottom, left, right
-        return Rect(ppos.x-r, ppos.y-r, r*2, r*2)
