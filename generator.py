@@ -11,6 +11,12 @@ HORIZONTAL = 0
 VERTICAL = 1
 
 class Generator():
+    """
+    Generator
+
+    Maze map generation
+    """
+
     def map(self):
         """
         Creates and returns a new randomly generated map

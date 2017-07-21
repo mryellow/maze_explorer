@@ -27,7 +27,8 @@ class Sensor():
 
 class Player(cocos.sprite.Sprite):
     palette = {}  # injected later
-    """Player
+    """
+    Player
 
     Responsabilities:
         Keeps state information for player

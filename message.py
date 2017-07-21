@@ -5,7 +5,10 @@ import config
 
 class MessageLayer(cocos.layer.Layer):
 
-    """Transitory messages over WorldLayer
+    """
+    MessageLayer
+
+    Transitory messages over WorldLayer
 
     Responsability:
     full display cycle for transitory messages, with effects and

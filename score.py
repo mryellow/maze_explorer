@@ -4,7 +4,10 @@ import config
 
 class ScoreLayer(cocos.layer.Layer):
 
-    """Score overlay
+    """
+    ScoreLayer
+
+    Score overlay
 
     Responsabilities:
         display score and battery

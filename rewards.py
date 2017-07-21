@@ -1,7 +1,9 @@
 class Rewards():
     """
-    Rewards methods inherited by WorldLayer
-    
+    Rewards
+
+    Methods inherited by WorldLayer
+
     Responsabilities:
         Add rewards to player in response to game events
     """
