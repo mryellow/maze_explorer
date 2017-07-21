@@ -1,4 +1,4 @@
-class WorldRewards():
+class WorldRewards(object):
     """
     WorldRewards
 
@@ -10,10 +10,10 @@ class WorldRewards():
     """
 
     def __init__(self):
-        super(Rewards, self).__init__()
-
+        super(WorldRewards, self).__init__()
+        
     # Reward functions implementing game modes
-    def reward_collision(self):
+    def reward_wall(self):
         """
         Add a wall collision reward
         """

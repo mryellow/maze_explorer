@@ -12,7 +12,14 @@ from maze_explorer import MazeExplorer
 
 def main(argv):
 
-    engine = MazeExplorer()
+    mode = 0
+    if '-m' in argv or '--mode' in argv:
+        indexes = [i for i,x in enumerate(argv) if x == '-m' or x == '--mode']
+        mode = argv[indexes[0]+1]
+        print('Changed mode to ' + str(mode))
+
+    engine = MazeExplorer(mode)
+
     if '-r' in argv or '--random' in argv:
         print('Random test agent...')
 

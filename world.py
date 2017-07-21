@@ -16,13 +16,14 @@ import config
 from player import Player
 from generator import Generator
 from score import ScoreLayer
+from world_collisions import WorldCollisions
 from world_queries import WorldQueries
 from world_rewards import WorldRewards
 
 import os
 script_dir = os.path.dirname(__file__)
 
-class WorldLayer(cocos.layer.Layer, mc.RectMapCollider, WorldQueries, WorldRewards):
+class WorldLayer(WorldCollisions, WorldQueries, WorldRewards, cocos.layer.Layer, mc.RectMapCollider):
 
     """
     WorldLayer
@@ -40,7 +41,6 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider, WorldQueries, WorldRewar
         super(WorldLayer, self).__init__()
 
         self.logger = logging.getLogger(__name__)
-        # TODO: Configurable log level
         self.logger.setLevel(config.settings['log_level'])
 
         self.mode = mode
@@ -73,8 +73,6 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider, WorldQueries, WorldRewar
         #self.collman = cm.CollisionManagerGrid(0.0, self.width,
         #                                       0.0, self.height,
         #                                       cell_size, cell_size)
-
-        #self.toRemove = set()
 
         self.on_bump_handler = self.on_bump_slide
 
@@ -122,7 +120,10 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider, WorldQueries, WorldRewar
         self.player = None
         self.gate = None
         #self.food_cnt = 0
-        #self.toRemove.clear()
+
+        # FIXME: Touching `to_remove` here converts it to `list`
+        #print(type(self.to_remove))
+        #self.to_remove.clear()
 
         self.win_status = 'intermission'  # | 'undecided' | 'conquered' | 'losed'
 
@@ -198,6 +199,10 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider, WorldQueries, WorldRewar
             end.y += math.cos(rad) * sensor.proximity;
             sensor.line = draw.Line(start, end, (50,50,100,200))
             self.map_layer.add(sensor.line)
+
+        self.init_collisions()
+
+
 
         #self.collman.add(self.map_layer)
         #self.collman.add(self.player)
@@ -292,7 +297,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider, WorldQueries, WorldRewar
 
         # Collision detected
         if self.bumped_x or self.bumped_y:
-            self.reward_collision()
+            self.reward_wall()
 
         self.player.velocity = newVel
         self.player.update_center(newPos)
@@ -310,6 +315,8 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider, WorldQueries, WorldRewar
         # TODO: Display messages for humans at some point
         #if self.player.game_over:
         #    self.level_losed()
+
+        self.update_collisions()
 
         # update collman
         #self.collman.clear()
