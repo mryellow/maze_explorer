@@ -4,6 +4,9 @@ import logging
 import pyglet
 from pyglet.window import key
 
+import os
+script_dir = os.path.dirname(__file__)
+
 tile_size = 10
 tiles_x = 50
 tiles_y = 50
@@ -28,6 +31,10 @@ settings = {
             "linear": 0.01
         },
         "rewards": {
+            "items": {
+                "food": 2.0,
+                "poison": -2.0
+            },
             "collision": -10.0,
             "explore": 1.0,
             "terminal": 0.0,
@@ -70,3 +77,9 @@ settings = {
 # world to view scales
 scale_x = settings["window"]["width"] / settings["world"]["width"]
 scale_y = settings["window"]["height"] / settings["world"]["height"]
+
+# load resources:
+pics = {
+    "player": pyglet.image.load(os.path.join(script_dir, 'assets', 'player7.png')),
+    "food": pyglet.image.load(os.path.join(script_dir, 'assets', 'circle6.png')),
+}

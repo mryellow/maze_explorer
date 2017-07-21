@@ -22,14 +22,12 @@ class Collidable(cocos.sprite.Sprite):
         Generate a collision manager sprite
     """
 
-    def __init__(self, cx, cy, btype, img, velocity=None):
+    def __init__(self, cx, cy, radius, btype, img, velocity=None):
         super(Collidable, self).__init__(img)
 
-        settings = config.settings['player']
-        palette = config.settings['view']['palette']
-        self.palette = palette
+        self.palette = config.settings['view']['palette']
 
-        self.radius = settings['radius']
+        self.radius = radius
         # the 1.05 so that visual radius a bit greater than collision radius
         # FIXME: Both `scale_x` and `scale_y`
         self.scale = (self.radius * 1.05) * config.scale_x / (self.image.width / 2.0)

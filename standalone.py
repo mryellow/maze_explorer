@@ -15,7 +15,7 @@ def main(argv):
     mode = 0
     if '-m' in argv or '--mode' in argv:
         indexes = [i for i,x in enumerate(argv) if x == '-m' or x == '--mode']
-        mode = argv[indexes[0]+1]
+        mode = int(argv[indexes[0]+1])
         print('Changed mode to ' + str(mode))
 
     engine = MazeExplorer(mode)

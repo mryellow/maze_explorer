@@ -2,7 +2,6 @@ import math
 
 import cocos
 import cocos.euclid as eu
-from cocos.rect import Rect
 
 from collidable import Collidable
 
@@ -26,11 +25,9 @@ class Player(Collidable):
         Keeps state information for player
     """
 
-    def __init__(self, cx, cy, btype, img, velocity=None):
-        super(Player, self).__init__(cx, cy, btype, img)
-
+    def __init__(self, cx, cy, velocity=None):
         settings = config.settings['player']
-        palette = config.settings['view']['palette']
+        super(Player, self).__init__(cx, cy, settings['radius'], 'player', config.pics['player'])
 
         if velocity is None:
             velocity = eu.Vector2(0.0, 0.0)

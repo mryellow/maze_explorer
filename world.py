@@ -46,6 +46,8 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
         self.mode = mode
         self.fn_show_message = fn_show_message
 
+        self.z = 0
+
         # basic geometry
         world = config.settings['world']
         self.width = world['width']  # world virtual width
@@ -60,13 +62,12 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
         self.buttons = buttons
 
         # load resources:
-        pics = {}
+        #pics = {}
         #pics["player"] = pyglet.resource.image('player7.png')
-        pics["player"] = pyglet.image.load(os.path.join(script_dir, 'assets', 'player7.png'))
-
+        #pics["player"] = pyglet.image.load(os.path.join(script_dir, 'assets', 'player7.png'))
+        #pics["food"] = pyglet.image.load(os.path.join(script_dir, 'assets', 'circle6.png'))
         #pics["food"] = pyglet.resource.image('circle6.png')
         #pics["wall"] = pyglet.resource.image('circle6.png')
-        self.pics = pics
 
         #cell_size = self.rPlayer * self.wall_scale_max * 2.0 * 1.25
         #cell_size = self.rPlayer * 0.1
@@ -142,8 +143,8 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
         #min_separation = min_separation_rel * rPlayer
         #wall_scale_min = self.wall_scale_min
         #wall_scale_max = self.wall_scale_max
-        pics = self.pics
-        z = 0
+        #pics = self.pics
+        self.z = 0
 
         # add walls
         #self.map_layer = ti.load(os.path.join(script_dir, 'test.tmx'))['map0']
@@ -151,8 +152,8 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
         self.map_layer.set_view(0, 0, self.map_layer.px_width, self.map_layer.px_height)
         # FIXME: Both `scale_x` and `scale_y`
         self.map_layer.scale = config.scale_x
-        self.add(self.map_layer, z=z)
-        z += 1
+        self.add(self.map_layer, z=self.z)
+        self.z += 1
 
         # add floor
         # TODO: Move to `Generator.inverse(map)`
@@ -180,13 +181,13 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
             eu.Vector2(self.map_layer.px_height-padding.x, self.map_layer.px_width-padding.y) # Top right
         ]
         self.spawn = corners[corner]
-        self.player = Player(self.spawn.x, self.spawn.y, 'player', pics['player'])
-        self.add(self.player, z=z)
-        z += 1
+        self.player = Player(self.spawn.x, self.spawn.y)
+        self.add(self.player, z=self.z)
+        self.z += 1
 
         self.score = ScoreLayer(self.player.stats)
-        self.add(self.score, z=z)
-        z += 1
+        self.add(self.score, z=self.z)
+        self.z += 1
 
         # Draw sensors
         # TODO: Decouple into view rendering
@@ -200,65 +201,8 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
             sensor.line = draw.Line(start, end, (50,50,100,200))
             self.map_layer.add(sensor.line)
 
-        self.init_collisions()
-
-
-
-        #self.collman.add(self.map_layer)
-        #self.collman.add(self.player)
-
-        #minSeparation = min_separation * 2. * rPlayer
-
-        # add gate
-        #rGate = gate_scale * rPlayer
-        #self.gate = Player(cx, cy, rGate, 'gate', pics['wall'])
-        #self.gate.color = Player.palette['wall']
-        #cntTrys = 0
-        #while cntTrys < 100:
-        #    cx = rGate + random.random() * (width - 2.0 * rGate)
-        #    cy = rGate + random.random() * (height - 2.0 * rGate)
-        #    self.gate.update_center(eu.Vector2(cx, cy))
-        #    if not self.collman.they_collide(self.player, self.gate):
-        #        break
-        #    cntTrys += 1
-        #self.add(self.gate, z=z)
-        #z += 1
-        #self.collman.add(self.gate)
-
-        # add food
-        #rFood = food_scale * rPlayer
-        #self.cnt_food = 0
-        #for i in range(food_num):
-        #    food = Player(cx, cy, rFood, 'food', pics['food'])
-        #    cntTrys = 0
-        #    while cntTrys < 100:
-        #        cx = rFood + random.random() * (width - 2.0 * rFood)
-        #        cy = rFood + random.random() * (height - 2.0 * rFood)
-        #        food.update_center(eu.Vector2(cx, cy))
-        #        if self.collman.any_near(food, min_separation) is None:
-        #            self.cnt_food += 1
-        #            self.add(food, z=z)
-        #            z += 1
-        #            self.collman.add(food)
-        #            break
-        #        cntTrys += 1
-
-        # add walls
-        #for i in range(wall_num):
-        #    s = random.random()
-        #    r = rPlayer * (wall_scale_min * s + wall_scale_max * (1.0 - s))  # lerp
-        #    wall = Player(cx, cy, r, 'wall', pics['wall'])
-        #    cntTrys = 0
-        #    while cntTrys < 100:
-        #        cx = r + random.random() * (width - 2.0 * r)
-        #        cy = r + random.random() * (height - 2.0 * r)
-        #        wall.update_center(eu.Vector2(cx, cy))
-        #        if self.collman.any_near(wall, min_separation) is None:
-        #            self.add(wall, z=z)
-        #            z += 1
-        #            self.collman.add(wall)
-        #            break
-        #        cntTrys += 1
+        # Generate obstacles
+        self.create_items()
 
     def update(self, dt):
         """
