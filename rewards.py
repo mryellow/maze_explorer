@@ -3,6 +3,7 @@ class Rewards():
     Rewards
 
     Methods inherited by WorldLayer
+    Has context for game settings, map state and player state
 
     Responsabilities:
         Add rewards to player in response to game events

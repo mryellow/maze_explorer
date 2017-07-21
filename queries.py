@@ -8,6 +8,7 @@ class Queries():
     Queries
 
     Methods for querying map inherited by WorldLayer
+    Has context for game settings, map state and player state
     """
 
     def __init__(self):
