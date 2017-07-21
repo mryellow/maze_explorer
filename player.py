@@ -8,14 +8,6 @@ from collidable import Collidable
 
 import config
 
-def world_to_view(v):
-    """world coords to view coords; v an eu.Vector2, returns (float, float)"""
-    return v.x * config.scale_x, v.y * config.scale_y
-
-#def reflection_y(a):
-#    assert isinstance(a, eu.Vector2)
-#    return eu.Vector2(a.x, -a.y)
-
 class Sensor():
     def __init__(self, angle, max_range):
         self.angle = angle
