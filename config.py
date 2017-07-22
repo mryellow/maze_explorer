@@ -7,9 +7,12 @@ from pyglet.window import key
 import os
 script_dir = os.path.dirname(__file__)
 
-tile_size = 10
-tiles_x = 50
-tiles_y = 50
+tiles = {
+    "tw": 10,
+    "th": 10,
+    "width": 50,
+    "height": 50
+}
 
 #fe = 1.0e-4
 settings = {
@@ -21,11 +24,13 @@ settings = {
         "resizable": False
     },
     "player": {
-        "radius": tile_size / 4,
+        "radius": tiles['tw'] / 4,
+        # TODO: Put all velocity settings in dict
         "top_speed": 50.0 / 4,
         "angular_velocity": 240.0 / 4,  # degrees / s
         "accel": 85.0,
         "deaccel": 5.0,
+        # TODO: Refactor to action `costs`, will apply to whichever `stat`
         "battery_use": {
             "angular": 0.01,
             "linear": 0.01
@@ -37,10 +42,8 @@ settings = {
         }
     },
     "world": {
-        "width": tile_size * tiles_x,
-        "height": tile_size * tiles_y,
-        "tiles_x": tiles_x,
-        "tiles_y": tiles_x,
+        "width": tiles['tw'] * tiles['width'],
+        "height": tiles['th'] * tiles['height'],
         "bindings": {
             #0: 'noop',
             key.LEFT: 'left',
