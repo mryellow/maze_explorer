@@ -2,7 +2,7 @@
 
 A maze exploration game for AI agents.
 
-![Screenshot](https://raw.githubusercontent.com/mryellow/maze_explorer/master/assets/screen_001.jpg)
+![Screenshot](https://raw.githubusercontent.com/mryellow/maze_explorer/master/assets/screen_002.jpg)
 
 ## TODO:
 
