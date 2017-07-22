@@ -63,20 +63,6 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
             buttons[self.bindings[k]] = 0
         self.buttons = buttons
 
-        # load resources:
-        #pics = {}
-        #pics["player"] = pyglet.resource.image('player7.png')
-        #pics["player"] = pyglet.image.load(os.path.join(script_dir, 'assets', 'player7.png'))
-        #pics["food"] = pyglet.image.load(os.path.join(script_dir, 'assets', 'circle6.png'))
-        #pics["food"] = pyglet.resource.image('circle6.png')
-        #pics["wall"] = pyglet.resource.image('circle6.png')
-
-        #cell_size = self.rPlayer * self.wall_scale_max * 2.0 * 1.25
-        #cell_size = self.rPlayer * 0.1
-        #self.collman = cm.CollisionManagerGrid(0.0, self.width,
-        #                                       0.0, self.height,
-        #                                       cell_size, cell_size)
-
         self.on_bump_handler = self.on_bump_slide
 
         self.schedule(self.update)
