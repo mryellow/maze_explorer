@@ -108,11 +108,7 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
         assert len(self.children) == 0
         self.player = None
         self.gate = None
-        #self.food_cnt = 0
-
-        # FIXME: Touching `to_remove` here converts it to `list`
-        #print(type(self.to_remove))
-        #self.to_remove.clear()
+        self.to_remove = []
 
         self.win_status = 'intermission'  # | 'undecided' | 'conquered' | 'losed'
 
