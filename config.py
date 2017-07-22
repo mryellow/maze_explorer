@@ -112,6 +112,11 @@ modes = [
     }
 ]
 
+# Ensure all modes have items for convenience
+for mode in modes:
+    if mode['items'] is None:
+        mode['items'] = {}
+
 # world to view scales
 scale_x = settings["window"]["width"] / settings["world"]["width"]
 scale_y = settings["window"]["height"] / settings["world"]["height"]
