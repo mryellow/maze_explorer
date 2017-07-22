@@ -47,7 +47,6 @@ class WorldItems(object):
             item = self.mode['items'][k]
             #{'terminal': False, 'num': 50, 'scale': 1.0, 'reward': 2.0}
             radius = item['scale'] * self.player.radius
-            print('radius', radius, type(radius))
             for i in range(item['num']):
                 self.add_item(radius, k)
 
