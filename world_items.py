@@ -135,12 +135,10 @@ class WorldItems(object):
             #if not other.removable:
             #    pass
 
-            # TODO: Could flag items as removable and others not
-            if typeball == 'food' or typeball == 'poison':
-                if other.removable:
-                    self.to_remove.append(other)
+            if other.removable:
+                self.to_remove.append(other)
 
-                self.reward_item(typeball)
+            self.reward_item(typeball)
 
         #
         #    elif (typeball == 'wall' or
