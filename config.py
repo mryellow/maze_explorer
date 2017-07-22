@@ -30,16 +30,6 @@ settings = {
             "angular": 0.01,
             "linear": 0.01
         },
-        "rewards": {
-            "items": {
-                "food": 2.0,
-                "poison": -2.0
-            },
-            "collision": -10.0,
-            "explore": 1.0,
-            "terminal": 0.0,
-            "goal": 100.0
-        },
         "sensors": {
             "num": 9,
             "fov": 15*math.pi/180,
@@ -51,8 +41,6 @@ settings = {
         "height": tile_size * tiles_y,
         "tiles_x": tiles_x,
         "tiles_y": tiles_x,
-        #"wall_scale_min": 0.75,  # relative to player
-        #"wall_scale_max": 2.25,  # relative to player
         "bindings": {
             #0: 'noop',
             key.LEFT: 'left',
@@ -66,7 +54,7 @@ settings = {
         "font_name": 'Axaxax',
         "palette": {
             'bg': (0, 65, 133),
-            'wall': (50, 50, 100),
+            'wall': (50, 50, 100), # Wall sensor colour
             'player': (237, 27, 36),
             #'wall': (247, 148, 29),
             'gate': (140, 198, 62),
@@ -75,6 +63,54 @@ settings = {
         }
     }
 }
+
+modes = [
+    # Mode 0
+    {
+        "explore": {
+            "reward": 1.0,
+            "terminal": False
+        },
+        "goal": {
+            "reward": 200.0,
+            "terminal": True
+        },
+        "wall": {
+            "reward": -100.0,
+            "terminal": True
+        },
+        "items": {}
+    },
+    # Mode 1
+    {
+        "explore": {
+            "reward": 0.0,
+            "terminal": False
+        },
+        "goal": {
+            "reward": 0.0,
+            "terminal": False
+        },
+        "wall": {
+            "reward": -100.0,
+            "terminal": True
+        },
+        "items": {
+            "food": {
+                "num": 50,
+                "scale": 2.0,
+                "reward": 2.0,
+                "terminal": False
+            },
+            "poison": {
+                "num": 50,
+                "scale": 2.0,
+                "reward": -4.0,
+                "terminal": False
+            },
+        }
+    }
+]
 
 # world to view scales
 scale_x = settings["window"]["width"] / settings["world"]["width"]

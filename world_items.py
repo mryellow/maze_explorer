@@ -38,26 +38,18 @@ class WorldItems(object):
         """
         Create collidable items
         """
-        if self.mode == 0: return
+        if not self.mode['items'] or len(self.mode['items']) == 0: return
 
         # FIXME: Check if already contains
         self.collman.add(self.player)
 
-        if self.mode == 1:
-
-            # add food items
-            # TODO: Configure items for game mode
-            item_scale = 2
-            radius = item_scale * self.player.radius
-            item_num = 50
-            item_type = 'food'
-            for i in range(item_num):
-                self.add_item(radius, item_type)
-
-            item_num = 50
-            item_type = 'poison'
-            for i in range(item_num):
-                self.add_item(radius, item_type)
+        for k in self.mode['items']:
+            item = self.mode['items'][k]
+            #{'terminal': False, 'num': 50, 'scale': 1.0, 'reward': 2.0}
+            radius = item['scale'] * self.player.radius
+            print('radius', radius, type(radius))
+            for i in range(item['num']):
+                self.add_item(radius, k)
 
             # add gate
             #rGate = gate_scale * rPlayer
@@ -81,7 +73,7 @@ class WorldItems(object):
         """
         Add a single item in random open position
         """
-        assert isinstance(radius, int) or isinstance(item_type, float)
+        assert isinstance(radius, int) or isinstance(radius, float)
         assert isinstance(item_type, str)
 
         separation_scale = 1.1
@@ -126,7 +118,7 @@ class WorldItems(object):
         """
         Test player for collisions with items
         """
-        if self.mode == 0: return
+        if not self.mode['items'] or len(self.mode['items']) == 0: return
 
         # update collman
         # FIXME: Why update each frame?
@@ -135,30 +127,29 @@ class WorldItems(object):
             if hasattr(node, 'cshape') and type(node.cshape) == cm.CircleShape:
                 self.collman.add(node)
 
-        if self.mode == 1:
-            # interactions player - others
-            for other in self.collman.iter_colliding(self.player):
-                typeball = other.btype
-                self.logger.debug('collision', typeball)
+        # interactions player - others
+        for other in self.collman.iter_colliding(self.player):
+            typeball = other.btype
+            self.logger.debug('collision', typeball)
 
-                # TODO: Limit player position on non-removable items
-                #if not other.removable:
-                #    pass
+            # TODO: Limit player position on non-removable items
+            #if not other.removable:
+            #    pass
 
-                # TODO: Could flag items as removable and others not
-                if typeball == 'food' or typeball == 'poison':
-                    if other.removable:
-                        self.to_remove.append(other)
+            # TODO: Could flag items as removable and others not
+            if typeball == 'food' or typeball == 'poison':
+                if other.removable:
+                    self.to_remove.append(other)
 
-                    self.reward_item(typeball)
-                    
-            #
-            #    elif (typeball == 'wall' or
-            #          typeball == 'gate' and self.cnt_food > 0):
-            #        self.level_losed()
-            #
-            #    elif typeball == 'gate':
-            #        self.level_conquered()
+                self.reward_item(typeball)
+
+        #
+        #    elif (typeball == 'wall' or
+        #          typeball == 'gate' and self.cnt_food > 0):
+        #        self.level_losed()
+        #
+        #    elif typeball == 'gate':
+        #        self.level_conquered()
 
         self.remove_items()
 

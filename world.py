@@ -37,13 +37,15 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
     """
     is_event_handler = True
 
-    def __init__(self, mode=0, fn_show_message=None):
+    def __init__(self, mode_id=0, fn_show_message=None):
         super(WorldLayer, self).__init__()
 
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(config.settings['log_level'])
 
-        self.mode = mode
+        self.mode_id = mode_id
+        self.mode = config.modes[mode_id]
+
         self.fn_show_message = fn_show_message
 
         self.z = 0
@@ -247,11 +249,6 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
         self.player.update_center(newPos)
         self.player.update_terminal()
 
-        # Negative terminal reward check
-        # Before game ending goal reward in `update_vistied`
-        if self.player.game_over:
-            self.reward_terminal()
-
         # In WorldLayer so we can access map
         self.update_visited()
         self.update_sensors()
@@ -348,23 +345,23 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
 
             # Check for collisions with items
             # List of items within sensor range, do for each sensor's range
-            # TODO: Only if state allows, or based on game mode
-            nears = self.collman.ranked_objs_near(self.player, sensor.max_range)
-            for near in nears:
-                other, other_dis = near
-                # Skip if further
-                if other_dis > dis:
-                    continue
+            if self.mode['items'] and len(self.mode['items']) > 0:
+                nears = self.collman.ranked_objs_near(self.player, sensor.max_range)
+                for near in nears:
+                    other, other_dis = near
+                    # Skip if further
+                    if other_dis > dis:
+                        continue
 
-                # Determine if within `fov`
-                other_rad = math.atan2(other.x - self.player.x, other.y - self.player.y)
-                # Round to bearing within one revolution
-                other_rad = other_rad % (math.pi*2)
-                round_rad = rad % (math.pi*2)
-                if abs(other_rad - round_rad) < (sensor.fov/2):
-                    sensor.proximity = other_dis
-                    sensor.sensed_type = other.btype
-                    dis = other_dis
+                    # Determine if within `fov`
+                    other_rad = math.atan2(other.x - self.player.x, other.y - self.player.y)
+                    # Round to bearing within one revolution
+                    other_rad = other_rad % (math.pi*2)
+                    round_rad = rad % (math.pi*2)
+                    if abs(other_rad - round_rad) < (sensor.fov/2):
+                        sensor.proximity = other_dis
+                        sensor.sensed_type = other.btype
+                        dis = other_dis
 
             # Redirect sensor lines
             # TODO: Decouple into view rendering

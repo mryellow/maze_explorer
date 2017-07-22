@@ -44,7 +44,6 @@ class Player(Collidable):
 
         self.game_over = False
         self.battery_use = settings['battery_use']
-        self.rewards = settings['rewards']
 
         self.stats = {
             "battery": 100,
