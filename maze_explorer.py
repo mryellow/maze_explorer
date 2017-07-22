@@ -75,7 +75,7 @@ class MazeExplorer():
         # Act in the environment
         self.step()
 
-        observation = self.world_layer.player.get_state()
+        observation = self.world_layer.get_state()
         reward = self.world_layer.player.get_reward()
         terminal = self.world_layer.player.game_over
         info = {}

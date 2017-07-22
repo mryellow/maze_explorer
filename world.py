@@ -350,6 +350,37 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
             sensor.line.end = end
             sensor.line.color = self.player.palette[sensor.sensed_type] + (int(255*0.5),)
 
+    def get_state(self):
+        """
+        Create state from sensors and battery
+        """
+        # Include battery level in state
+        battery = self.player.stats['battery']/100
+        # Create observation from sensor proximities
+        # TODO: Have state persist, then update columns by `sensed_type`
+
+        # Multi-channel; detecting `items`
+        if len(self.mode['items']) > 0:
+            observation = []
+            for sensor in self.player.sensors:
+                col = []
+                # Always include range in channel 0
+                col.append(sensor.proximity_norm())
+                for item_type in self.mode['items']:
+                    if sensor.sensed_type == item_type:
+                        col.append(sensor.proximity_norm())
+                    else:
+                        col.append(0)
+                observation.append(col)
+            observation.append([battery,0,0])
+
+        # Single-channel; walls only
+        else:
+            observation = [o.proximity_norm() for o in self.player.sensors]
+            observation.append(battery)
+
+        return observation
+
     #def open_gate(self):
     #    self.gate.color = Player.palette['gate']
 

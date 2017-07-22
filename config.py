@@ -71,22 +71,6 @@ modes = [
     # Mode 0
     {
         "explore": {
-            "reward": 1.0,
-            "terminal": False
-        },
-        "goal": {
-            "reward": 200.0,
-            "terminal": True
-        },
-        "wall": {
-            "reward": -100.0,
-            "terminal": True
-        },
-        "items": {}
-    },
-    # Mode 1
-    {
-        "explore": {
             "reward": 0.0,
             "terminal": False
         },
@@ -112,6 +96,22 @@ modes = [
                 "terminal": False
             },
         }
+    },
+    # Mode 1
+    {
+        "explore": {
+            "reward": 1.0,
+            "terminal": False
+        },
+        "goal": {
+            "reward": 200.0,
+            "terminal": True
+        },
+        "wall": {
+            "reward": -100.0,
+            "terminal": True
+        },
+        "items": {}
     }
 ]
 

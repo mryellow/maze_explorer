@@ -72,17 +72,6 @@ class Player(Collidable):
 
         return reward
 
-    def get_state(self):
-        """
-        Create state from sensors and battery
-        """
-        # Create observation from sensor proximities
-        observation = [o.proximity_norm() for o in self.sensors]
-        # Include battery level in state
-        observation.append(self.stats['battery']/100)
-
-        return observation
-
     def update_terminal(self):
         """
         Check terminal conditions
