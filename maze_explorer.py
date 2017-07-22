@@ -14,7 +14,7 @@ from world import WorldLayer
 class MazeExplorer():
     """
     MazeExplorer
-    
+
     Wrapper for game engine
     """
 

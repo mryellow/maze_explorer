@@ -198,7 +198,7 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
             end = start.copy()
             end.x += math.sin(rad) * sensor.proximity;
             end.y += math.cos(rad) * sensor.proximity;
-            sensor.line = draw.Line(start, end, (50,50,100,200))
+            sensor.line = draw.Line(start, end, self.player.palette['wall'] + (int(255*0.5),))
             self.map_layer.add(sensor.line)
 
         # Generate obstacles
@@ -253,8 +253,8 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
             self.reward_terminal()
 
         # In WorldLayer so we can access map
-        self.update_visited(newPos)
-        self.update_sensors(newPos)
+        self.update_visited()
+        self.update_sensors()
 
         # TODO: Display messages for humans at some point
         #if self.player.game_over:
@@ -293,11 +293,12 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
     #        self.remove(node)
     #    self.toRemove.clear()
 
-    def update_visited(self, pos):
+    def update_visited(self):
         """
         Updates exploration map visited status
         """
-        assert isinstance(pos, eu.Vector2)
+        assert isinstance(self.player.cshape.center, eu.Vector2)
+        pos = self.player.cshape.center
 
         # Helper function
         def set_visited(layer, cell):
@@ -329,19 +330,41 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
                 neighbour = neighbours[cell]
                 set_visited(self.visit_layer, neighbour)
 
-    def update_sensors(self, pos):
+    def update_sensors(self):
         """
         Check path for each sensor and record wall proximity
         """
-        assert isinstance(pos, eu.Vector2)
+        assert isinstance(self.player.cshape.center, eu.Vector2)
+        pos = self.player.cshape.center
 
         a = math.radians(self.player.rotation)
         for sensor in self.player.sensors:
+            sensor.sensed_type = 'wall'
             rad = a + sensor.angle
             dis = min(self.distance_to_tile(pos, rad), sensor.max_range)
 
             # Keep state of sensed range
             sensor.proximity = dis
+
+            # Check for collisions with items
+            # List of items within sensor range, do for each sensor's range
+            # TODO: Only if state allows, or based on game mode
+            nears = self.collman.ranked_objs_near(self.player, sensor.max_range)
+            for near in nears:
+                other, other_dis = near
+                # Skip if further
+                if other_dis > dis:
+                    continue
+
+                # Determine if within `fov`
+                other_rad = math.atan2(other.x - self.player.x, other.y - self.player.y)
+                # Round to bearing within one revolution
+                other_rad = other_rad % (math.pi*2)
+                round_rad = rad % (math.pi*2)
+                if abs(other_rad - round_rad) < (sensor.fov/2):
+                    sensor.proximity = other_dis
+                    sensor.sensed_type = other.btype
+                    dis = other_dis
 
             # Redirect sensor lines
             # TODO: Decouple into view rendering
@@ -350,6 +373,7 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
             end.y += math.cos(rad) * dis
             sensor.line.start = pos
             sensor.line.end = end
+            sensor.line.color = self.player.palette[sensor.sensed_type] + (int(255*0.5),)
 
     #def open_gate(self):
     #    self.gate.color = Player.palette['gate']

@@ -8,10 +8,12 @@ from collidable import Collidable
 import config
 
 class Sensor():
-    def __init__(self, angle, max_range):
+    def __init__(self, fov, angle, max_range):
+        self.fov = fov
         self.angle = angle
         self.max_range = max_range
         self.proximity = self.max_range
+        self.sensed_type = ''
         self.line = None
 
     def proximity_norm(self):
@@ -58,7 +60,7 @@ class Player(Collidable):
         self.sensors = []
         for i in xrange(0, sensor_num):
             rad = (i-((sensor_num)/2))*sensor_fov;
-            sensor = Sensor(rad, sensor_max)
+            sensor = Sensor(sensor_fov, rad, sensor_max)
             self.sensors.append(sensor)
             #print('Initialised sensor', i, rad)
 
