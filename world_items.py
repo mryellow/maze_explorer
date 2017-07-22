@@ -116,7 +116,6 @@ class WorldItems(object):
 
             item.update_center(eu.Vector2(cx, cy))
             if self.collman.any_near(item, min_separation) is None:
-            #    self.cnt_food += 1
                 self.add(item, z=self.z)
                 self.z += 1
                 self.collman.add(item)
@@ -152,10 +151,7 @@ class WorldItems(object):
                         self.to_remove.append(other)
 
                     self.reward_item(typeball)
-
-                    #self.cnt_food -= 1
-                    #if not self.cnt_food:
-                    #    self.open_gate()
+                    
             #
             #    elif (typeball == 'wall' or
             #          typeball == 'gate' and self.cnt_food > 0):
