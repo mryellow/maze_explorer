@@ -124,10 +124,6 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
         # build !
         width = self.width
         height = self.height
-        #min_separation = min_separation_rel * rPlayer
-        #wall_scale_min = self.wall_scale_min
-        #wall_scale_max = self.wall_scale_max
-        #pics = self.pics
         self.z = 0
 
         # add walls
