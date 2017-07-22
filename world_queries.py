@@ -3,7 +3,7 @@ import math
 import cocos
 import cocos.euclid as eu
 
-class WorldQueries():
+class WorldQueries(object):
     """
     WorldQueries
 

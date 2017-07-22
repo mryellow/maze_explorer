@@ -1,32 +1,25 @@
 import math
 
 import cocos
-import cocos.collision_model as cm
 import cocos.euclid as eu
-from cocos.rect import Rect
+
+from collidable import Collidable
 
 import config
 
-def world_to_view(v):
-    """world coords to view coords; v an eu.Vector2, returns (float, float)"""
-    return v.x * config.scale_x, v.y * config.scale_y
-
-#def reflection_y(a):
-#    assert isinstance(a, eu.Vector2)
-#    return eu.Vector2(a.x, -a.y)
-
 class Sensor():
-    def __init__(self, angle, max_range):
+    def __init__(self, fov, angle, max_range):
+        self.fov = fov
         self.angle = angle
         self.max_range = max_range
         self.proximity = self.max_range
+        self.sensed_type = ''
         self.line = None
 
     def proximity_norm(self):
         return max(0, min(self.proximity / self.max_range, self.max_range))
 
-class Player(cocos.sprite.Sprite):
-    palette = {}  # injected later
+class Player(Collidable):
     """
     Player
 
@@ -34,21 +27,10 @@ class Player(cocos.sprite.Sprite):
         Keeps state information for player
     """
 
-    def __init__(self, cx, cy, btype, img, velocity=None):
-        super(Player, self).__init__(img)
-
+    def __init__(self, cx, cy, velocity=None):
         settings = config.settings['player']
-        palette = config.settings['view']['palette']
-        self.palette = palette
+        super(Player, self).__init__(cx, cy, settings['radius'], 'player', config.pics['player'])
 
-        self.radius = settings['radius']
-        # the 1.05 so that visual radius a bit greater than collision radius
-        # FIXME: Both `scale_x` and `scale_y`
-        self.scale = (self.radius * 1.05) * config.scale_x / (self.image.width / 2.0)
-        self.btype = btype
-        self.color = self.palette[btype]
-        self.cshape = cm.CircleShape(eu.Vector2(cx, cy), self.radius)
-        self.update_center(self.cshape.center)
         if velocity is None:
             velocity = eu.Vector2(0.0, 0.0)
         self.velocity = velocity
@@ -62,7 +44,6 @@ class Player(cocos.sprite.Sprite):
 
         self.game_over = False
         self.battery_use = settings['battery_use']
-        self.rewards = settings['rewards']
 
         self.stats = {
             "battery": 100,
@@ -78,7 +59,7 @@ class Player(cocos.sprite.Sprite):
         self.sensors = []
         for i in xrange(0, sensor_num):
             rad = (i-((sensor_num)/2))*sensor_fov;
-            sensor = Sensor(rad, sensor_max)
+            sensor = Sensor(sensor_fov, rad, sensor_max)
             self.sensors.append(sensor)
             #print('Initialised sensor', i, rad)
 
@@ -101,16 +82,6 @@ class Player(cocos.sprite.Sprite):
         observation.append(self.stats['battery']/100)
 
         return observation
-
-    #def reset(self):
-    #    self.impulse_dir = eu.Vector2(0.0, 1.0)
-
-    def update_center(self, cshape_center):
-        """cshape_center must be eu.Vector2"""
-        assert isinstance(cshape_center, eu.Vector2)
-
-        self.position = world_to_view(cshape_center)
-        self.cshape.center = cshape_center
 
     def update_terminal(self):
         """
@@ -205,10 +176,3 @@ class Player(cocos.sprite.Sprite):
         newPos.y -= self.cshape.r
 
         return newPos
-
-    def get_rect(self):
-        ppos = self.cshape.center
-        r = self.cshape.r
-
-        # FIXME: Use top, bottom, left, right
-        return Rect(ppos.x-r, ppos.y-r, r*2, r*2)

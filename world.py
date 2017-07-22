@@ -16,13 +16,14 @@ import config
 from player import Player
 from generator import Generator
 from score import ScoreLayer
+from world_items import WorldItems
 from world_queries import WorldQueries
 from world_rewards import WorldRewards
 
 import os
 script_dir = os.path.dirname(__file__)
 
-class WorldLayer(cocos.layer.Layer, mc.RectMapCollider, WorldQueries, WorldRewards):
+class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.RectMapCollider):
 
     """
     WorldLayer
@@ -36,15 +37,18 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider, WorldQueries, WorldRewar
     """
     is_event_handler = True
 
-    def __init__(self, mode=0, fn_show_message=None):
+    def __init__(self, mode_id=0, fn_show_message=None):
         super(WorldLayer, self).__init__()
 
         self.logger = logging.getLogger(__name__)
-        # TODO: Configurable log level
         self.logger.setLevel(config.settings['log_level'])
 
-        self.mode = mode
+        self.mode_id = mode_id
+        self.mode = config.modes[mode_id]
+
         self.fn_show_message = fn_show_message
+
+        self.z = 0
 
         # basic geometry
         world = config.settings['world']
@@ -58,23 +62,6 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider, WorldQueries, WorldRewar
         for k in self.bindings:
             buttons[self.bindings[k]] = 0
         self.buttons = buttons
-
-        # load resources:
-        pics = {}
-        #pics["player"] = pyglet.resource.image('player7.png')
-        pics["player"] = pyglet.image.load(os.path.join(script_dir, 'assets', 'player7.png'))
-
-        #pics["food"] = pyglet.resource.image('circle6.png')
-        #pics["wall"] = pyglet.resource.image('circle6.png')
-        self.pics = pics
-
-        #cell_size = self.rPlayer * self.wall_scale_max * 2.0 * 1.25
-        #cell_size = self.rPlayer * 0.1
-        #self.collman = cm.CollisionManagerGrid(0.0, self.width,
-        #                                       0.0, self.height,
-        #                                       cell_size, cell_size)
-
-        #self.toRemove = set()
 
         self.on_bump_handler = self.on_bump_slide
 
@@ -121,8 +108,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider, WorldQueries, WorldRewar
         assert len(self.children) == 0
         self.player = None
         self.gate = None
-        #self.food_cnt = 0
-        #self.toRemove.clear()
+        self.to_remove = []
 
         self.win_status = 'intermission'  # | 'undecided' | 'conquered' | 'losed'
 
@@ -138,11 +124,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider, WorldQueries, WorldRewar
         # build !
         width = self.width
         height = self.height
-        #min_separation = min_separation_rel * rPlayer
-        #wall_scale_min = self.wall_scale_min
-        #wall_scale_max = self.wall_scale_max
-        pics = self.pics
-        z = 0
+        self.z = 0
 
         # add walls
         #self.map_layer = ti.load(os.path.join(script_dir, 'test.tmx'))['map0']
@@ -150,8 +132,8 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider, WorldQueries, WorldRewar
         self.map_layer.set_view(0, 0, self.map_layer.px_width, self.map_layer.px_height)
         # FIXME: Both `scale_x` and `scale_y`
         self.map_layer.scale = config.scale_x
-        self.add(self.map_layer, z=z)
-        z += 1
+        self.add(self.map_layer, z=self.z)
+        self.z += 1
 
         # add floor
         # TODO: Move to `Generator.inverse(map)`
@@ -179,13 +161,13 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider, WorldQueries, WorldRewar
             eu.Vector2(self.map_layer.px_height-padding.x, self.map_layer.px_width-padding.y) # Top right
         ]
         self.spawn = corners[corner]
-        self.player = Player(self.spawn.x, self.spawn.y, 'player', pics['player'])
-        self.add(self.player, z=z)
-        z += 1
+        self.player = Player(self.spawn.x, self.spawn.y)
+        self.add(self.player, z=self.z)
+        self.z += 1
 
         self.score = ScoreLayer(self.player.stats)
-        self.add(self.score, z=z)
-        z += 1
+        self.add(self.score, z=self.z)
+        self.z += 1
 
         # Draw sensors
         # TODO: Decouple into view rendering
@@ -196,64 +178,11 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider, WorldQueries, WorldRewar
             end = start.copy()
             end.x += math.sin(rad) * sensor.proximity;
             end.y += math.cos(rad) * sensor.proximity;
-            sensor.line = draw.Line(start, end, (50,50,100,200))
+            sensor.line = draw.Line(start, end, self.player.palette['wall'] + (int(255*0.5),))
             self.map_layer.add(sensor.line)
 
-        #self.collman.add(self.map_layer)
-        #self.collman.add(self.player)
-
-        #minSeparation = min_separation * 2. * rPlayer
-
-        # add gate
-        #rGate = gate_scale * rPlayer
-        #self.gate = Player(cx, cy, rGate, 'gate', pics['wall'])
-        #self.gate.color = Player.palette['wall']
-        #cntTrys = 0
-        #while cntTrys < 100:
-        #    cx = rGate + random.random() * (width - 2.0 * rGate)
-        #    cy = rGate + random.random() * (height - 2.0 * rGate)
-        #    self.gate.update_center(eu.Vector2(cx, cy))
-        #    if not self.collman.they_collide(self.player, self.gate):
-        #        break
-        #    cntTrys += 1
-        #self.add(self.gate, z=z)
-        #z += 1
-        #self.collman.add(self.gate)
-
-        # add food
-        #rFood = food_scale * rPlayer
-        #self.cnt_food = 0
-        #for i in range(food_num):
-        #    food = Player(cx, cy, rFood, 'food', pics['food'])
-        #    cntTrys = 0
-        #    while cntTrys < 100:
-        #        cx = rFood + random.random() * (width - 2.0 * rFood)
-        #        cy = rFood + random.random() * (height - 2.0 * rFood)
-        #        food.update_center(eu.Vector2(cx, cy))
-        #        if self.collman.any_near(food, min_separation) is None:
-        #            self.cnt_food += 1
-        #            self.add(food, z=z)
-        #            z += 1
-        #            self.collman.add(food)
-        #            break
-        #        cntTrys += 1
-
-        # add walls
-        #for i in range(wall_num):
-        #    s = random.random()
-        #    r = rPlayer * (wall_scale_min * s + wall_scale_max * (1.0 - s))  # lerp
-        #    wall = Player(cx, cy, r, 'wall', pics['wall'])
-        #    cntTrys = 0
-        #    while cntTrys < 100:
-        #        cx = r + random.random() * (width - 2.0 * r)
-        #        cy = r + random.random() * (height - 2.0 * r)
-        #        wall.update_center(eu.Vector2(cx, cy))
-        #        if self.collman.any_near(wall, min_separation) is None:
-        #            self.add(wall, z=z)
-        #            z += 1
-        #            self.collman.add(wall)
-        #            break
-        #        cntTrys += 1
+        # Generate obstacles
+        self.create_items()
 
     def update(self, dt):
         """
@@ -292,24 +221,21 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider, WorldQueries, WorldRewar
 
         # Collision detected
         if self.bumped_x or self.bumped_y:
-            self.reward_collision()
+            self.reward_wall()
 
         self.player.velocity = newVel
         self.player.update_center(newPos)
         self.player.update_terminal()
 
-        # Negative terminal reward check
-        # Before game ending goal reward in `update_vistied`
-        if self.player.game_over:
-            self.reward_terminal()
-
         # In WorldLayer so we can access map
-        self.update_visited(newPos)
-        self.update_sensors(newPos)
+        self.update_visited()
+        self.update_sensors()
 
         # TODO: Display messages for humans at some point
         #if self.player.game_over:
         #    self.level_losed()
+
+        self.update_collisions()
 
         # update collman
         #self.collman.clear()
@@ -342,11 +268,12 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider, WorldQueries, WorldRewar
     #        self.remove(node)
     #    self.toRemove.clear()
 
-    def update_visited(self, pos):
+    def update_visited(self):
         """
         Updates exploration map visited status
         """
-        assert isinstance(pos, eu.Vector2)
+        assert isinstance(self.player.cshape.center, eu.Vector2)
+        pos = self.player.cshape.center
 
         # Helper function
         def set_visited(layer, cell):
@@ -378,19 +305,41 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider, WorldQueries, WorldRewar
                 neighbour = neighbours[cell]
                 set_visited(self.visit_layer, neighbour)
 
-    def update_sensors(self, pos):
+    def update_sensors(self):
         """
         Check path for each sensor and record wall proximity
         """
-        assert isinstance(pos, eu.Vector2)
+        assert isinstance(self.player.cshape.center, eu.Vector2)
+        pos = self.player.cshape.center
 
         a = math.radians(self.player.rotation)
         for sensor in self.player.sensors:
+            sensor.sensed_type = 'wall'
             rad = a + sensor.angle
             dis = min(self.distance_to_tile(pos, rad), sensor.max_range)
 
             # Keep state of sensed range
             sensor.proximity = dis
+
+            # Check for collisions with items
+            # List of items within sensor range, do for each sensor's range
+            if self.mode['items'] and len(self.mode['items']) > 0:
+                nears = self.collman.ranked_objs_near(self.player, sensor.max_range)
+                for near in nears:
+                    other, other_dis = near
+                    # Skip if further
+                    if other_dis > dis:
+                        continue
+
+                    # Determine if within `fov`
+                    other_rad = math.atan2(other.x - self.player.x, other.y - self.player.y)
+                    # Round to bearing within one revolution
+                    other_rad = other_rad % (math.pi*2)
+                    round_rad = rad % (math.pi*2)
+                    if abs(other_rad - round_rad) < (sensor.fov/2):
+                        sensor.proximity = other_dis
+                        sensor.sensed_type = other.btype
+                        dis = other_dis
 
             # Redirect sensor lines
             # TODO: Decouple into view rendering
@@ -399,6 +348,7 @@ class WorldLayer(cocos.layer.Layer, mc.RectMapCollider, WorldQueries, WorldRewar
             end.y += math.cos(rad) * dis
             sensor.line.start = pos
             sensor.line.end = end
+            sensor.line.color = self.player.palette[sensor.sensed_type] + (int(255*0.5),)
 
     #def open_gate(self):
     #    self.gate.color = Player.palette['gate']

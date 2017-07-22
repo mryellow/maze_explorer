@@ -14,14 +14,15 @@ from world import WorldLayer
 class MazeExplorer():
     """
     MazeExplorer
-    
+
     Wrapper for game engine
     """
 
-    def __init__(self, mode=0, visible = True):
+    def __init__(self, mode_id=0, visible = True):
         config.settings['window']['visible'] = visible
 
-        self.mode = mode
+        self.mode_id = mode_id
+        self.mode = config.modes[mode_id]
 
         self.director = director
         self.director.init(**config.settings['window'])
@@ -31,6 +32,8 @@ class MazeExplorer():
         self.actions_num = len(config.settings['world']['bindings'])
         # Sensors, plus one for battery indicator
         self.observation_num = config.settings['player']['sensors']['num'] + 1
+        # Observation channels as game mode requires
+        self.observation_chans = max(1, len(self.mode['items']))
 
     def create_scene(self):
         """
@@ -47,7 +50,7 @@ class MazeExplorer():
         message_layer = MessageLayer()
         self.scene.add(message_layer, z=self.z)
         self.z += 1
-        self.world_layer = WorldLayer(self.mode, fn_show_message=message_layer.show_message)
+        self.world_layer = WorldLayer(self.mode_id, fn_show_message=message_layer.show_message)
         self.scene.add(self.world_layer, z=self.z)
         self.z += 1
 
