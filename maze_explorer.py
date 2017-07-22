@@ -32,8 +32,8 @@ class MazeExplorer():
         self.actions_num = len(config.settings['world']['bindings'])
         # Sensors, plus one for battery indicator
         self.observation_num = config.settings['player']['sensors']['num'] + 1
-        # Observation channels as game mode requires
-        self.observation_chans = max(1, len(self.mode['items']))
+        # Observation channels as game mode requires, plus one for walls
+        self.observation_chans = max(1, len(self.mode['items']) + 1)
 
     def create_scene(self):
         """
