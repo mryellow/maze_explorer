@@ -30,7 +30,7 @@ class WorldRewards(object):
         Add a wall collision reward
         """
         if self.mode == 0:
-            self.logger.debug("Bump {x}/{y}'".format(x=self.bumped_x, y=self.bumped_y))
+            self.logger.debug("Wall {x}/{y}'".format(x=self.bumped_x, y=self.bumped_y))
             self.player.stats['reward'] += self.player.rewards['collision']
             # Not recorded in `score`
             # Wall collisions end the episode in mode 0

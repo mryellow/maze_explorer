@@ -87,7 +87,8 @@ class WorldItems(object):
         separation_scale = 1.1
         min_separation = separation_scale * radius
 
-        item = Collidable(0, 0, radius, item_type, self.pics[item_type])
+        # Removable item
+        item = Collidable(0, 0, radius, item_type, self.pics[item_type], True)
         cntTrys = 0
         while cntTrys < 100:
             cx = radius + random.random() * (self.width - 2.0 * radius)
@@ -141,9 +142,15 @@ class WorldItems(object):
                 typeball = other.btype
                 self.logger.debug('collision', typeball)
 
+                # TODO: Limit player position on non-removable items
+                #if not other.removable:
+                #    pass
+
                 # TODO: Could flag items as removable and others not
                 if typeball == 'food' or typeball == 'poison':
-                    self.to_remove.append(other)
+                    if other.removable:
+                        self.to_remove.append(other)
+
                     self.reward_item(typeball)
 
                     #self.cnt_food -= 1
@@ -157,6 +164,9 @@ class WorldItems(object):
             #    elif typeball == 'gate':
             #        self.level_conquered()
 
+        self.remove_items()
+
+    def remove_items(self):
         # at end of frame do removes; as collman is fully regenerated each frame
         # theres no need to update it here.
         while len(self.to_remove) > 0:

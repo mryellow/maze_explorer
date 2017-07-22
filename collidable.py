@@ -22,8 +22,10 @@ class Collidable(cocos.sprite.Sprite):
         Generate a collision manager sprite
     """
 
-    def __init__(self, cx, cy, radius, btype, img, velocity=None):
+    def __init__(self, cx, cy, radius, btype, img, removable=False):
         super(Collidable, self).__init__(img)
+
+        # TODO: Inheritable moving items `velocity=None`
 
         self.palette = config.settings['view']['palette']
 
@@ -35,6 +37,8 @@ class Collidable(cocos.sprite.Sprite):
         self.color = self.palette[btype]
         self.cshape = cm.CircleShape(eu.Vector2(cx, cy), self.radius)
         self.update_center(self.cshape.center)
+
+        self.removable = removable
 
     def update_center(self, cshape_center):
         """cshape_center must be eu.Vector2"""
