@@ -64,20 +64,23 @@ class WorldQueries(object):
                     position = search.y
 
                 # Set bound to next tile on axis
+                # Offset next search by one pixel into tile
                 bound = (position % tile)
                 if increasing:
                     bound = tile - bound
-                    bound = position + bound + 1
+                    bound = position + bound
+                    offset = 1
                 else:
-                    bound = position - bound - 1
+                    bound = position - bound
+                    offset = -1
 
                 # Find intersect
                 if axis == 'x':
                     intersect = ((bound - search.x) / m) + search.y
-                    return eu.Vector2(bound, intersect)
+                    return eu.Vector2(bound+offset, intersect)
                 elif axis == 'y':
                     intersect = -m * (search.y - bound) + search.x
-                    return eu.Vector2(intersect, bound)
+                    return eu.Vector2(intersect, bound+offset)
             # End Helper
 
             if top or bottom:

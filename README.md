@@ -7,7 +7,6 @@ A maze exploration game for AI agents.
 ## TODO:
 
 * [ ] New game modes
-* [ ] Do we need to go 1px further in `distance_to_tile`?
 * [ ] Combined actions, forward and left/right
 * [ ] Terminal state for human, with switch for god-mode
 * [ ] Zoomed scrolling view for human players
