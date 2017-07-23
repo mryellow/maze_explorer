@@ -75,16 +75,6 @@ class Player(Collidable):
 
         return reward
 
-    def update_terminal(self):
-        """
-        Check terminal conditions
-        """
-        # Out of battery, set terminal state
-        if self.stats['battery'] <= 0:
-            self.stats['battery'] = 0
-            # TODO: Let agent keep playing in hopes of finding end-goal
-            #self.game_over = True
-
     def update_rotation(self, dt, buttons):
         """
         Updates rotation and impulse direction

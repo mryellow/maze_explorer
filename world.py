@@ -223,9 +223,10 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
         if self.bumped_x or self.bumped_y:
             self.reward_wall()
 
+        self.reward_battery()
+
         self.player.velocity = newVel
         self.player.update_center(newPos)
-        self.player.update_terminal()
 
         # In WorldLayer so we can access map
         self.update_visited()

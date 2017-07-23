@@ -63,13 +63,14 @@ Apples and poison.
 
 ##### Rewards
 
-* `-100` and terminal state on wall collision
+* `-100` collision with wall
 * `+2` collision with apple
 * `-4` collision with poison
 
 ##### Terminal
 
 * Wall collision
+* Battery out
 
 #### `MazeExplorer-v1`
 
@@ -83,7 +84,8 @@ Explore the maze and make it back to spawn before battery runs out.
 
 ##### Rewards
 
-* `-100` and terminal state on wall collision
+* `-100` collision with wall
+* `-100` battery out
 
 ###### When battery above 50%
 
@@ -102,4 +104,5 @@ Spawn tile is no different to any other from agents perspective, must remember h
 ##### Terminal
 
 * Wall collision
+* Battery out
 * Return to home goal

@@ -13,6 +13,17 @@ class WorldRewards(object):
         super(WorldRewards, self).__init__()
 
     # Reward functions implementing game modes
+    def reward_battery(self):
+        """
+        Add a battery level reward
+        """
+        mode = self.mode['battery']
+        if mode and mode and self.__test_cond(mode):
+            self.logger.debug('Battery out')
+            self.player.stats['reward'] += mode['reward']
+
+            self.player.game_over = self.player.game_over or mode['terminal']
+
     def reward_item(self, item_type):
         """
         Add a food collision reward
@@ -21,7 +32,7 @@ class WorldRewards(object):
 
         mode = self.mode['items']
         if mode and mode[item_type] and self.__test_cond(mode[item_type]):
-            self.logger.debug(item_type + " consumed")
+            self.logger.debug("{item_type} consumed".format(item_type=item_type))
             self.player.stats['reward'] += mode[item_type]['reward']
             self.player.stats['score'] += mode[item_type]['reward']
 
