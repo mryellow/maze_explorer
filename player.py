@@ -51,6 +51,9 @@ class Player(Collidable):
             "score": 0
         }
 
+        # `actions` reserved by cocos, collision_model attempts to remove
+        self.controls = settings['actions']
+
         sensor_num = settings['sensors']['num']
         sensor_fov = settings['sensors']['fov']
         sensor_max = settings['sensors']['max_range']

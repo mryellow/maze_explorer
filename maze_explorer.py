@@ -29,7 +29,7 @@ class MazeExplorer():
         #pyglet.font.add_directory('.') # adjust as necessary if font included
         self.z = 0
 
-        self.actions_num = len(config.settings['world']['bindings'])
+        self.actions_num = len(config.settings['player']['actions'])
         # Sensors, plus one for battery indicator
         self.observation_num = config.settings['player']['sensors']['num'] + 1
         # Observation channels as game mode requires, plus one for walls
@@ -63,14 +63,13 @@ class MazeExplorer():
         assert isinstance(action, int)
         assert action < self.actions_num, "%r (%s) invalid"%(action, type(action))
 
-        # Reset other buttons
+        # Reset buttons
         for k in self.world_layer.buttons:
             self.world_layer.buttons[k] = 0
 
-        key = sorted(self.world_layer.buttons.keys())[action]
-
-        # Set action for next step
-        self.world_layer.buttons[key] = 1
+        # Apply each button defined in action config
+        for key in self.world_layer.player.controls[action]:
+            self.world_layer.buttons[key] = 1
 
         # Act in the environment
         self.step()
