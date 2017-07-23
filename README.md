@@ -47,7 +47,7 @@ pip install maze_explorer
 
 ### Game modes
 
-#### `MazeExplorer-v0`
+#### `MazeExplorerEat-v0`
 
 Apples and poison.
 
@@ -72,7 +72,7 @@ Apples and poison.
 * Wall collision
 * Battery out
 
-#### `MazeExplorer-v1`
+#### `MazeExplorerExplore-v0`
 
 Explore the maze and make it back to spawn before battery runs out.
 
