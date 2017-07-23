@@ -30,6 +30,8 @@ pip install maze_explorer
 
 ## Standalone
 
+* Note: Not registered yet.
+
 `python standalone.py`
 
 ### Options
