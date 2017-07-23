@@ -35,7 +35,7 @@ class MazeExplorer():
         # Observation channels as game mode requires, plus one for walls
         self.observation_chans = len(self.mode['items']) + 1
 
-    def create_scene(self):
+    def reset(self):
         """
         Attach a new engine to director
         """
@@ -104,5 +104,5 @@ class MazeExplorer():
         """
         Run in real-time
         """
-        self.create_scene()
+        self.reset()
         return self.director.run(self.scene)
