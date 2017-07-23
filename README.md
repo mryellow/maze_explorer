@@ -22,13 +22,13 @@ pip install -e .
 
 ### Package
 
+* Note: Not registered yet.
+
 ```bash
 pip install maze_explorer
 ```
 
 ## Standalone
-
-* Note: Not registered yet.
 
 `python standalone.py`
 
