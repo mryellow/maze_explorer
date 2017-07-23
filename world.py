@@ -370,9 +370,10 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
                     if sensor.sensed_type == item_type:
                         col.append(sensor.proximity_norm())
                     else:
-                        col.append(0)
+                        # Default to 1 (`max_range/max_range`)
+                        col.append(1)
                 observation.append(col)
-            observation.append([battery,0,0])
+            observation.append([battery,1,1])
 
         # Single-channel; walls only
         else:

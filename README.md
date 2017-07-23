@@ -55,8 +55,9 @@ Apples and poison.
 
 ```
 [
-  [obstacle_range, apple_range, poison_range],
-  ...
+  [min(wall_range, apple_range, poison_range), apple_range, poison_range],
+  ...,
+  [battery,1,1]
 ]
 ```
 
@@ -77,7 +78,7 @@ Explore the maze and make it back to spawn before battery runs out.
 ##### State
 
 ```
-[wall_range, ...]
+[wall_range, ..., battery]
 ```
 
 ##### Rewards
