@@ -19,45 +19,51 @@ class WorldRewards(object):
         """
         assert isinstance(item_type, str)
 
-        if self.mode['items'] and self.mode['items'][item_type]:
+        mode = self.mode['items']
+        if mode and mode[item_type] and self.__test_cond(mode[item_type]):
             self.logger.debug(item_type + " consumed")
-            self.player.stats['reward'] += self.mode['items'][item_type]['reward']
-            self.player.stats['score'] += self.mode['items'][item_type]['reward']
+            self.player.stats['reward'] += mode[item_type]['reward']
+            self.player.stats['score'] += mode[item_type]['reward']
 
-            self.player.game_over = self.player.game_over or self.mode['items'][item_type]['terminal']
+            self.player.game_over = self.player.game_over or mode[item_type]['terminal']
 
     def reward_wall(self):
         """
         Add a wall collision reward
         """
-        if self.mode['wall'] and self.mode['wall']:
+        mode = self.mode['wall']
+        if mode and mode and self.__test_cond(mode):
             self.logger.debug("Wall {x}/{y}'".format(x=self.bumped_x, y=self.bumped_y))
-            self.player.stats['reward'] += self.mode['wall']['reward']
+            self.player.stats['reward'] += mode['reward']
 
-            self.player.game_over = self.player.game_over or self.mode['wall']['terminal']
+            self.player.game_over = self.player.game_over or mode['terminal']
 
     def reward_explore(self):
         """
         Add an exploration reward
         """
-        if self.mode['explore'] and self.mode['explore']['reward']:
-            # TODO: Condition in config?
-            if self.player.stats['battery'] > 50:
-                self.player.stats['reward'] += self.mode['explore']['reward']
-                self.player.stats['score'] += self.mode['explore']['reward']
+        mode = self.mode['explore']
+        if mode and mode['reward'] and self.__test_cond(mode):
+            self.player.stats['reward'] += mode['reward']
+            self.player.stats['score'] += mode['reward']
 
-                self.player.game_over = self.player.game_over or self.mode['explore']['terminal']
+            self.player.game_over = self.player.game_over or mode['terminal']
 
     def reward_goal(self):
         """
         Add an end goal reward
         """
-        if self.mode['goal'] and self.mode['goal']['reward']:
-            # TODO: Condition in config?
-            if self.player.stats['battery'] <= 50:
-                if self.mode['goal']['reward'] > 0:
-                    self.logger.info("Escaped!!")
-                self.player.stats['reward'] += self.mode['goal']['reward']
-                self.player.stats['score'] += self.mode['goal']['reward']
+        mode = self.mode['goal']
+        if mode and mode['reward'] and self.__test_cond(mode):
+            if mode['reward'] > 0:
+                self.logger.info("Escaped!!")
+            self.player.stats['reward'] += mode['reward']
+            self.player.stats['score'] += mode['reward']
 
-                self.player.game_over = self.player.game_over or self.mode['goal']['terminal']
+            self.player.game_over = self.player.game_over or mode['terminal']
+
+    def __test_cond(self, mode):
+        try:
+            return mode['cond'](self.player)
+        except KeyError:
+            return True

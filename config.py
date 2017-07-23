@@ -67,6 +67,13 @@ settings = {
     }
 }
 
+# Callbacks to test reward conditions
+def cond_explore_battery(player):
+    return player.stats['battery'] > 50
+
+def cond_goal_battery(player):
+    return player.stats['battery'] <= 50
+
 modes = [
     # Mode 0
     {
@@ -100,10 +107,12 @@ modes = [
     # Mode 1
     {
         "explore": {
+            "cond": cond_explore_battery,
             "reward": 1.0,
             "terminal": False
         },
         "goal": {
+            "cond": cond_goal_battery,
             "reward": 200.0,
             "terminal": True
         },
