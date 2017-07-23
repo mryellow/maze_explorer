@@ -55,6 +55,15 @@ Apples and poison.
 * `+2` collision with apple
 * `-4` collision with poison
 
+##### State
+
+```
+[
+  [obstacle_range, apple_range, poison_range],
+  ...
+]
+```
+
 #### `MazeExplorer-v1`
 
 Explore the maze and make it back to spawn before battery runs out.
@@ -73,3 +82,9 @@ This could be considered "cheating" as `visited` state is not observable in envi
 * No futher exploration rewards
 
 Spawn tile is no different to any other from agents perspective, must remember how to return to it.
+
+##### State
+
+```
+[wall_range, ...]
+```
