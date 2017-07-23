@@ -92,4 +92,4 @@ Thus agent must keep it's own internal state and/or develop a policy which overc
 * `+200` reward goal state on reaching spawn tile
 * No futher exploration rewards
 
-Spawn tile is no different to any other from agents perspective, must remember how to return to it or develop a policy when increases the likelihood of such.
+Spawn tile is no different to any other from agents perspective, must remember how to return to it or develop a policy which increases the likelihood of such.
