@@ -84,11 +84,6 @@ Explore the maze and make it back to spawn before battery runs out.
 
 * `-100` and terminal state on wall collision
 
-##### Terminal
-
-* Wall collision
-* Return to home goal
-
 ###### When battery above 50%
 
 * `+1` exploration reward on first visit to tiles
@@ -102,3 +97,8 @@ Thus agent must keep it's own internal state and/or develop a policy which overc
 * No futher exploration rewards
 
 Spawn tile is no different to any other from agents perspective, must remember how to return to it or develop a policy which increases the likelihood of such.
+
+##### Terminal
+
+* Wall collision
+* Return to home goal
