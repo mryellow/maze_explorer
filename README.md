@@ -66,6 +66,10 @@ Apples and poison.
 * `+2` collision with apple
 * `-4` collision with poison
 
+##### Terminal
+
+* Wall collision
+
 #### `MazeExplorer-v1`
 
 Explore the maze and make it back to spawn before battery runs out.
@@ -79,6 +83,11 @@ Explore the maze and make it back to spawn before battery runs out.
 ##### Rewards
 
 * `-100` and terminal state on wall collision
+
+##### Terminal
+
+* Wall collision
+* Return to home goal
 
 ###### When battery above 50%
 
