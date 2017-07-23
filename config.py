@@ -41,6 +41,7 @@ settings = {
             "max_range": 200 / 4
         },
         "actions": [
+            #['noop'],
             ['left'],
             ['up', 'left'],
             ['up'],

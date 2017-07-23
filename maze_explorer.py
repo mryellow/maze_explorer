@@ -69,7 +69,8 @@ class MazeExplorer():
 
         # Apply each button defined in action config
         for key in self.world_layer.player.controls[action]:
-            self.world_layer.buttons[key] = 1
+            if key in self.world_layer.buttons:
+                self.world_layer.buttons[key] = 1
 
         # Act in the environment
         self.step()
