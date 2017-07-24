@@ -56,6 +56,9 @@ class MazeExplorer():
 
         self.director._set_scene(self.scene)
 
+        # Step once to refresh before `act`
+        self.step()
+
         # TODO: Reset to `ones`?
         return self.world_layer.get_state()
 
