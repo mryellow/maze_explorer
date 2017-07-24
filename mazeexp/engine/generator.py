@@ -17,19 +17,29 @@ class Generator():
     Maze map generation
     """
 
-    def map(self):
+    def map(self, width, height):
         """
         Creates and returns a new randomly generated map
         """
         template = ti.load(os.path.join(script_dir, 'assets', 'template.tmx'))['map0']
-        template.set_view(0, 0, template.px_width, template.px_height)
+        #template.set_view(0, 0, template.px_width, template.px_height)
+        template.set_view(0, 0, width*template.tw, height*template.th)
 
         # TODO: Save the generated map.
         #epoch = int(time.time())
         #filename = 'map_' + str(epoch) + '.tmx'
 
+        # Draw borders
+        border_x = template.cells[width]
+        for y in xrange(0,height+1):
+            border_x[y].tile = template.cells[0][0].tile
+
+        for x in xrange(0,width):
+            template.cells[x][height].tile = template.cells[0][0].tile
+
         # Start within borders
-        self.recursive_division(template.cells, 3, (template.px_width/template.tw)-1, (template.px_height/template.th)-1, 0, 0)
+        #self.recursive_division(template.cells, 3, (template.px_width/template.tw)-1, (template.px_height/template.th)-1, 0, 0)
+        self.recursive_division(template.cells, 3, width, height, 0, 0)
 
         return template
 

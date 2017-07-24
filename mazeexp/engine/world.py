@@ -55,6 +55,9 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
         self.width = world['width']  # world virtual width
         self.height = world['height']  # world virtual height
 
+        self.tiles_w = config.tiles['width']
+        self.tiles_h = config.tiles['height']
+
         self.generator = Generator()
 
         self.bindings = world['bindings']
@@ -124,11 +127,13 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
         # build !
         width = self.width
         height = self.height
+        tiles_w = self.tiles_w
+        tiles_h = self.tiles_h
         self.z = 0
 
         # add walls
         #self.map_layer = ti.load(os.path.join(script_dir, 'test.tmx'))['map0']
-        self.map_layer = self.generator.map()
+        self.map_layer = self.generator.map(tiles_w, tiles_h)
         self.map_layer.set_view(0, 0, self.map_layer.px_width, self.map_layer.px_height)
         # FIXME: Both `scale_x` and `scale_y`
         self.map_layer.scale = config.scale_x
@@ -156,9 +161,9 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
         padding = eu.Vector2(self.map_layer.tw*1.5, self.map_layer.th*1.5)
         corners = [
             eu.Vector2(padding.x, padding.y), # Bottom left
-            eu.Vector2(padding.x, self.map_layer.px_width-padding.y), # Bottom right
-            eu.Vector2(self.map_layer.px_height-padding.x, padding.y), # Top left
-            eu.Vector2(self.map_layer.px_height-padding.x, self.map_layer.px_width-padding.y) # Top right
+            eu.Vector2(((tiles_w+1)*self.map_layer.tw)-padding.x, padding.y), # Bottom right
+            eu.Vector2(padding.x, ((tiles_h+1)*self.map_layer.th)-padding.y), # Top right
+            eu.Vector2(((tiles_w+1)*self.map_layer.tw)-padding.x, ((tiles_h+1)*self.map_layer.th)-padding.y) # Top left
         ]
         self.spawn = corners[corner]
         self.player = Player(self.spawn.x, self.spawn.y)

@@ -10,8 +10,9 @@ script_dir = os.path.dirname(__file__)
 tiles = {
     "tw": 10,
     "th": 10,
-    "width": 50,
-    "height": 50
+    # Current template arrangement will take up to 50x50 tiles
+    "width": 20,
+    "height": 20 
 }
 
 #fe = 1.0e-4
@@ -107,13 +108,13 @@ modes = [
         },
         "items": {
             "food": {
-                "num": 50,
+                "num": 20,
                 "scale": 2.0,
                 "reward": 2.0,
                 "terminal": False
             },
             "poison": {
-                "num": 50,
+                "num": 20,
                 "scale": 2.0,
                 "reward": -4.0,
                 "terminal": False
