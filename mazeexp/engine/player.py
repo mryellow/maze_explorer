@@ -1,4 +1,5 @@
 import math
+import random
 
 import cocos
 import cocos.euclid as eu
@@ -50,6 +51,9 @@ class Player(Collidable):
             "reward": 0,
             "score": 0
         }
+
+        # Spawn with random bearing
+        self.rotation = (random.random() * 360) - 180
 
         # `actions` reserved by cocos, collision_model attempts to remove
         self.controls = settings['actions']
