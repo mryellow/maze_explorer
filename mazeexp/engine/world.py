@@ -208,24 +208,26 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
         newVel.x, newVel.y = self.collide_map(self.map_layer, oldRect, newRect, newVel.x, newVel.y)
 
         # Stop at edges of map
-        # FIXME: Use top, bottom, left, right etc instead of radius
-        if newRect.top > self.height:
-            newRect.y = self.height - (self.player.radius * 2)
-
-        if newRect.bottom < 0:
-            newRect.y = 0
-
-        if newRect.left < 0:
-            newRect.x = 0
-
-        if newRect.right > self.width:
-            newRect.x = self.width - (self.player.radius * 2)
+        #if newRect.top > self.height:
+        #    newRect.y = self.height - (self.player.radius * 2)
+        #if newRect.bottom < 0:
+        #    newRect.y = 0
+        #if newRect.left < 0:
+        #    newRect.x = 0
+        #if newRect.right > self.width:
+        #    newRect.x = self.width - (self.player.radius * 2)
 
         newPos = self.player.cshape.center
         newPos.x, newPos.y = newRect.center
 
         # Collision detected
-        if self.bumped_x or self.bumped_y:
+        margin = self.map_layer.th / 2
+        if newRect.top > self.height or \
+            newRect.bottom < 0 or \
+            newRect.left < 0 or \
+            newRect.right > self.width or \
+            self.bumped_x or self.bumped_y:
+            
             self.reward_wall()
 
         self.reward_battery()

@@ -15,15 +15,15 @@ def main(argv):
     mode_id = 0
     if '-m' in argv or '--mode' in argv:
         indexes = [i for i,x in enumerate(argv) if x == '-m' or x == '--mode']
-        mode_id = int(argv[indexes[0]+1])
-        print('Changed mode to ' + str(mode_id))
+        mode_id = argv[indexes[0]+1]
+        print('Changed mode to ' + mode_id)
 
     engine = mx.MazeExplorer(mode_id)
 
     if '-r' in argv or '--random' in argv:
         print('Random test agent...')
 
-        engine.create_scene()
+        engine.reset()
 
         while not engine.director.window.has_exit:
             action = randint(0, engine.actions_num-1)
@@ -32,9 +32,12 @@ def main(argv):
             #print(action, [min(observation),max(observation)], reward, terminal)
     elif '-s' in argv or '--step' in argv:
         print('Step by step...')
-        engine.create_scene()
+        engine.reset()
+        cnt = 0
         while not engine.director.window.has_exit:
             engine.step()
+            #print(cnt)
+            cnt += 1
     else:
         engine.run()
 
