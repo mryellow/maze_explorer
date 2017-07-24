@@ -1,7 +1,7 @@
 from setuptools import setup
 from setuptools import find_packages
 
-setup(name='maze_explorer',
+setup(name='mazeexp',
       version='0.0.1',
       author='Mr-Yellow',
       author_email='mr-yellow@mr-yellow.com',

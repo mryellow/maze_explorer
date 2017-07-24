@@ -21,8 +21,8 @@ class MazeExplorer():
     def __init__(self, mode_id=0, visible = True):
         config.settings['window']['visible'] = visible
 
-        self.mode_id = mode_id
-        self.mode = config.modes[mode_id]
+        self.mode_id = int(mode_id)
+        self.mode = config.modes[self.mode_id]
 
         self.director = director
         self.director.init(**config.settings['window'])

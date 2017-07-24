@@ -25,7 +25,7 @@ pip install -e .
 * Note: Not registered yet.
 
 ```bash
-pip install maze_explorer
+pip install mazeexp
 ```
 
 ## Standalone

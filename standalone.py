@@ -8,7 +8,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 
 from random import randint
 
-from maze_explorer import MazeExplorer
+#from mazeexp import MazeExplorer
+import mazeexp as mx
 
 def main(argv):
 
@@ -18,7 +19,7 @@ def main(argv):
         mode_id = int(argv[indexes[0]+1])
         print('Changed mode to ' + str(mode_id))
 
-    engine = MazeExplorer(mode_id)
+    engine = mx.MazeExplorer(mode_id)
 
     if '-r' in argv or '--random' in argv:
         print('Random test agent...')
