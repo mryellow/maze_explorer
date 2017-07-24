@@ -53,7 +53,7 @@ class Player(Collidable):
         }
 
         # Spawn with random bearing
-        self.rotation = (random.random() * 360) - 180
+        #self.rotation = (random.random() * 360) - 180
 
         # `actions` reserved by cocos, collision_model attempts to remove
         self.controls = settings['actions']
