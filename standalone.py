@@ -8,7 +8,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 
 from random import randint
 
-#from mazeexp import MazeExplorer
 import mazeexp as mx
 
 def main(argv):

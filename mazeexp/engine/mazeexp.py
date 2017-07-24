@@ -56,6 +56,9 @@ class MazeExplorer():
 
         self.director._set_scene(self.scene)
 
+        # TODO: Reset to `ones`?
+        return self.world_layer.get_state()
+
     def act(self, action):
         """
         Take one action for one step
