@@ -10,6 +10,7 @@ setup(name='mazeexp',
     url='https://github.com/mryellow/maze_explorer',
     license='MIT',
     install_requires=['cocos2d', 'pyglet'],
+    keywords='maze, game, maze-explorer, openaigym, openai-gym',
     classifiers=[
         # How mature is this project? Common values are
         #   3 - Alpha
