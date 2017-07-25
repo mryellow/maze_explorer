@@ -7,7 +7,6 @@ setup(name='mazeexp',
       author_email='mr-yellow@mr-yellow.com',
       description='A maze exploration game engine',
       packages=find_packages(),
-      package_data={'mazeexp': ['engine/assets/*.*']},
       url='https://github.com/mryellow/maze_explorer',
       license='MIT',
       install_requires=['cocos2d', 'pyglet']

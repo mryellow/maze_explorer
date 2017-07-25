@@ -1,0 +1,2 @@
+include LICENSE
+recursive-include mazeexp/engine/assets *.jpg *.png *.tmx
