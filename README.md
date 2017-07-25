@@ -106,3 +106,15 @@ Spawn tile is no different to any other from agents perspective, must remember h
 * Wall collision
 * Battery out
 * Return to home goal
+
+## Cite
+
+If you use Maze Explorer in your academic research, we would be grateful if you could cite it as follows:
+
+@misc{king2017mazeexplorer,
+    author = {King},
+    title = {Maze Explorer: A maze exploration game for AI agents},
+    howpublished={Web page},
+    url = {https://github.com/mryellow/maze_explorer},
+    year = {2017}
+}
