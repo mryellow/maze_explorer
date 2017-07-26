@@ -227,7 +227,7 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
             newRect.left < 0 or \
             newRect.right > self.width or \
             self.bumped_x or self.bumped_y:
-            
+
             self.reward_wall()
 
         self.reward_battery()
@@ -335,6 +335,8 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
                 nears = self.collman.ranked_objs_near(self.player, sensor.max_range)
                 for near in nears:
                     other, other_dis = near
+                    # Distances are from edge to edge see #2
+                    other_dis += self.player.radius
                     # Skip if further
                     if other_dis > dis:
                         continue
