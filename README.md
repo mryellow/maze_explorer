@@ -63,6 +63,7 @@ Based on [Andrej Karpathy's Javascript environment](https://github.com/karpathy/
 ##### Rewards
 
 * `sum(proximity) / len(sensors) or 1` Agents don't like seeing walls, especially up close
+* `*1.1` Forward action bonus
 * `+5` collision with apple
 * `-6` collision with poison
 

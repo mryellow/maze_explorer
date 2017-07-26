@@ -94,7 +94,7 @@ modes = [
     {
         "proximity": {
             "cond": __cond_action_up,
-            "reward": 1.0 # Potential forward bonus ~~10% Bonus on proximity reward~~
+            "reward": 1.1 # 10% Bonus on proximity reward
         },
         "wall": {
             "reward": 0.0,
