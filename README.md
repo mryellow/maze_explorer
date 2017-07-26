@@ -69,7 +69,7 @@ Based on [Andrej Karpathy's Javascript environment](https://github.com/karpathy/
 
 ##### Terminal
 
-* Wall collision
+* None
 
 #### Mode 1 `MazeExplorerExplore-v0`
 

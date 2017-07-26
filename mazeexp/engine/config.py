@@ -98,7 +98,7 @@ modes = [
         },
         "wall": {
             "reward": 0.0,
-            "terminal": True
+            "terminal": False
         },
         "items": {
             "food": {
