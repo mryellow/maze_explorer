@@ -17,6 +17,8 @@ class WorldRewards(object):
         """
         Add a battery level reward
         """
+        if not 'battery' in self.mode:
+            return
         mode = self.mode['battery']
         if mode and mode and self.__test_cond(mode):
             self.logger.debug('Battery out')
@@ -30,6 +32,8 @@ class WorldRewards(object):
         """
         assert isinstance(item_type, str)
 
+        if not 'items' in self.mode:
+            return
         mode = self.mode['items']
         if mode and mode[item_type] and self.__test_cond(mode[item_type]):
             self.logger.debug("{item_type} consumed".format(item_type=item_type))
@@ -42,6 +46,8 @@ class WorldRewards(object):
         """
         Add a wall collision reward
         """
+        if not 'wall' in self.mode:
+            return
         mode = self.mode['wall']
         if mode and mode and self.__test_cond(mode):
             self.logger.debug("Wall {x}/{y}'".format(x=self.bumped_x, y=self.bumped_y))
@@ -53,6 +59,8 @@ class WorldRewards(object):
         """
         Add an exploration reward
         """
+        if not 'explore' in self.mode:
+            return
         mode = self.mode['explore']
         if mode and mode['reward'] and self.__test_cond(mode):
             self.player.stats['reward'] += mode['reward']
@@ -64,6 +72,8 @@ class WorldRewards(object):
         """
         Add an end goal reward
         """
+        if not 'goal' in self.mode:
+            return
         mode = self.mode['goal']
         if mode and mode['reward'] and self.__test_cond(mode):
             if mode['reward'] > 0:
@@ -73,8 +83,32 @@ class WorldRewards(object):
 
             self.player.game_over = self.player.game_over or mode['terminal']
 
+    def reward_proximity(self):
+        """
+        Add a wall proximity reward
+        """
+        if not 'proximity' in self.mode:
+            return
+        mode = self.mode['proximity']
+
+        # Calculate proximity reward
+        reward = 0
+        for sensor in self.player.sensors:
+            if sensor.sensed_type == 'wall':
+                reward += sensor.proximity_norm()
+            else:
+                reward += 1
+
+        reward /= len(self.player.sensors)
+        if mode and mode and self.__test_cond(mode):
+            # Apply bonus
+            reward *= mode['reward']
+
+        reward = min(1.0, reward * 2)
+        self.player.stats['reward'] += reward
+
     def __test_cond(self, mode):
         try:
-            return mode['cond'](self.player)
+            return mode['cond'](self)
         except KeyError:
             return True

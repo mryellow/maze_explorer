@@ -49,6 +49,8 @@ pip install mazeexp
 
 Apples and poison.
 
+Based on [Andrej Karpathy's Javascript environment](https://github.com/karpathy/convnetjs/blob/master/demo/rldemo.html)
+
 ##### State
 
 ```
@@ -60,9 +62,9 @@ Apples and poison.
 
 ##### Rewards
 
-* `-100` collision with wall
-* `+2` collision with apple
-* `-4` collision with poison
+* `sum(proximity) / len(sensors) or 1` Agents don't like seeing walls, especially up close
+* `+5` collision with apple
+* `-6` collision with poison
 
 ##### Terminal
 

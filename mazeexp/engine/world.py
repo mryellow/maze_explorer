@@ -45,8 +45,6 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
 
         self.mode_id = mode_id
         self.mode = config.modes[self.mode_id]
-        # Only include battery sense dependent on config
-        self.sense_battery = config.sense_battery[self.mode_id]
 
         self.fn_show_message = fn_show_message
 
@@ -222,6 +220,9 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
         newPos = self.player.cshape.center
         newPos.x, newPos.y = newRect.center
 
+        self.player.velocity = newVel
+        self.player.update_center(newPos)
+
         # Collision detected
         margin = self.map_layer.th / 2
         if newRect.top > self.height or \
@@ -232,14 +233,12 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
 
             self.reward_wall()
 
-        self.reward_battery()
-
-        self.player.velocity = newVel
-        self.player.update_center(newPos)
-
         # In WorldLayer so we can access map
         self.update_visited()
         self.update_sensors()
+
+        self.reward_battery()
+        self.reward_proximity()
 
         # TODO: Display messages for humans at some point
         #if self.player.game_over:
@@ -385,13 +384,13 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
                         # Default to 1 (`max_range/max_range`)
                         col.append(1)
                 observation.append(col)
-            if self.sense_battery:
+            if 'battery' in self.mode:
                 observation.append([battery,1,1])
 
         # Single-channel; walls only
         else:
             observation = [o.proximity_norm() for o in self.player.sensors]
-            if self.sense_battery:
+            if 'battery' in self.mode:
                 observation.append(battery)
 
         return observation

@@ -23,8 +23,6 @@ class MazeExplorer():
 
         self.mode_id = int(mode_id)
         self.mode = config.modes[self.mode_id]
-        # Only include battery sense dependent on config
-        self.sense_battery = config.sense_battery[self.mode_id]
 
         self.director = director
         self.director.init(**config.settings['window'])
@@ -35,7 +33,7 @@ class MazeExplorer():
         # Sensors
         self.observation_num = config.settings['player']['sensors']['num']
         # Plus one for battery indicator
-        if self.sense_battery:
+        if 'battery' in self.mode:
             self.observation_num += 1
         # Observation channels as game mode requires, plus one for walls
         self.observation_chans = len(self.mode['items']) + 1

@@ -77,53 +77,40 @@ settings = {
 }
 
 # Callbacks to test reward conditions
-def __cond_battery_out(player):
-    return player.stats['battery'] <= 0
+def __cond_action_up(world):
+    return world.buttons['up'] == 1
 
-def __cond_explore_battery(player):
-    return player.stats['battery'] > 50
+def __cond_battery_out(world):
+    return world.player.stats['battery'] <= 0
 
-def __cond_goal_battery(player):
-    return player.stats['battery'] <= 50
+def __cond_explore_battery(world):
+    return world.player.stats['battery'] > 50
 
-# Turn on the battery sense dependent on game mode
-sense_battery = [
-    # Mode 0
-    False,
-    # Mode 1
-    True
-]
+def __cond_goal_battery(world):
+    return world.player.stats['battery'] <= 50
 
 modes = [
     # Mode 0
     {
-        "battery": {
-            "reward": 0.0,
-            "terminal": False
-        },
-        "explore": {
-            "reward": 0.0,
-            "terminal": False
-        },
-        "goal": {
-            "reward": 0.0,
-            "terminal": False
+        "proximity": {
+            "cond": __cond_action_up,
+            "reward": 1.0 # Potential forward bonus ~~10% Bonus on proximity reward~~
         },
         "wall": {
-            "reward": -100.0,
+            "reward": 0.0,
             "terminal": True
         },
         "items": {
             "food": {
                 "num": 20,
                 "scale": 2.0,
-                "reward": 2.0,
+                "reward": 5.0,
                 "terminal": False
             },
             "poison": {
                 "num": 20,
                 "scale": 2.0,
-                "reward": -4.0,
+                "reward": -6.0,
                 "terminal": False
             },
         }
