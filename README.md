@@ -54,8 +54,7 @@ Apples and poison.
 ```
 [
   [min(wall_range, apple_range, poison_range), apple_range, poison_range],
-  ...,
-  [battery,1,1]
+  ...
 ]
 ```
 
@@ -68,7 +67,6 @@ Apples and poison.
 ##### Terminal
 
 * Wall collision
-* Battery out
 
 #### Mode 1 `MazeExplorerExplore-v0`
 

@@ -44,7 +44,9 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
         self.logger.setLevel(config.settings['log_level'])
 
         self.mode_id = mode_id
-        self.mode = config.modes[mode_id]
+        self.mode = config.modes[self.mode_id]
+        # Only include battery sense dependent on config
+        self.sense_battery = config.sense_battery[self.mode_id]
 
         self.fn_show_message = fn_show_message
 
@@ -383,12 +385,14 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
                         # Default to 1 (`max_range/max_range`)
                         col.append(1)
                 observation.append(col)
-            observation.append([battery,1,1])
+            if self.sense_battery:
+                observation.append([battery,1,1])
 
         # Single-channel; walls only
         else:
             observation = [o.proximity_norm() for o in self.player.sensors]
-            observation.append(battery)
+            if self.sense_battery:
+                observation.append(battery)
 
         return observation
 

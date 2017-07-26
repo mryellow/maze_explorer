@@ -12,7 +12,7 @@ tiles = {
     "th": 10,
     # Current template arrangement will take up to 50x50 tiles
     "width": 20,
-    "height": 20 
+    "height": 20
 }
 
 #fe = 1.0e-4
@@ -86,13 +86,20 @@ def __cond_explore_battery(player):
 def __cond_goal_battery(player):
     return player.stats['battery'] <= 50
 
+# Turn on the battery sense dependent on game mode
+sense_battery = [
+    # Mode 0
+    False,
+    # Mode 1
+    True
+]
+
 modes = [
     # Mode 0
     {
         "battery": {
-            "cond": __cond_battery_out,
             "reward": 0.0,
-            "terminal": True
+            "terminal": False
         },
         "explore": {
             "reward": 0.0,
