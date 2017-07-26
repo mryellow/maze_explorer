@@ -49,7 +49,7 @@ pip install mazeexp
 
 Apples and poison.
 
-Based on [Andrej Karpathy's Javascript environment](https://github.com/karpathy/convnetjs/blob/master/demo/rldemo.html)
+Based on [Andrej Karpathy's Javascript environment](https://cs.stanford.edu/people/karpathy/convnetjs/demo/rldemo.html)
 
 ##### State
 
