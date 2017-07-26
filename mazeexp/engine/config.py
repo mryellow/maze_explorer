@@ -97,8 +97,8 @@ modes = [
             "reward": 1.1 # 10% Bonus on proximity reward
         },
         "wall": {
-            "reward": 0.0,
-            "terminal": False
+            "reward": -10.0,
+            "terminal": True
         },
         "items": {
             "food": {
