@@ -66,6 +66,8 @@ class MazeExplorer():
         """
         Take one action for one step
         """
+        # FIXME: Hack to change in return type
+        action = int(action)
         assert isinstance(action, int)
         assert action < self.actions_num, "%r (%s) invalid"%(action, type(action))
 

@@ -22,8 +22,6 @@ pip install -e .
 
 ### Package
 
-* Note: Not registered yet.
-
 ```bash
 pip install mazeexp
 ```
