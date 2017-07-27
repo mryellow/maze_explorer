@@ -207,30 +207,28 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
         # modifies `newRect` to be the nearest rect ... still outside any `map_layer` object.
         newVel.x, newVel.y = self.collide_map(self.map_layer, oldRect, newRect, newVel.x, newVel.y)
 
-        # Stop at edges of map
-        #if newRect.top > self.height:
-        #    newRect.y = self.height - (self.player.radius * 2)
-        #if newRect.bottom < 0:
-        #    newRect.y = 0
-        #if newRect.left < 0:
-        #    newRect.x = 0
-        #if newRect.right > self.width:
-        #    newRect.x = self.width - (self.player.radius * 2)
+        # Ensure player can't escape borders
+        border = False
+        if newRect.top > self.height:
+            newRect.top = self.height
+            border = True
+        if newRect.bottom < self.map_layer.th:
+            newRect.bottom = self.map_layer.th
+            border = True
+        if newRect.left < self.map_layer.th:
+            newRect.left = self.map_layer.th
+            border = True
+        if newRect.right > self.width:
+            newRect.right = self.width
+            border = True
 
         newPos = self.player.cshape.center
         newPos.x, newPos.y = newRect.center
-
         self.player.velocity = newVel
         self.player.update_center(newPos)
 
         # Collision detected
-        margin = self.map_layer.th / 2
-        if newRect.top > self.height or \
-            newRect.bottom < 0 or \
-            newRect.left < 0 or \
-            newRect.right > self.width or \
-            self.bumped_x or self.bumped_y:
-
+        if border or self.bumped_x or self.bumped_y:
             self.reward_wall()
 
         # In WorldLayer so we can access map
