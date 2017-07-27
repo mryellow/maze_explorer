@@ -66,11 +66,10 @@ Based on [Andrej Karpathy's Javascript environment](https://cs.stanford.edu/peop
 * `*1.1` Forward action bonus
 * `+5` collision with apple
 * `-6` collision with poison
-* `-10` collision with wall
 
 ##### Terminal
 
-* Wall collision
+* None
 
 #### Mode 1 `MazeExplorerExplore-v0`
 
