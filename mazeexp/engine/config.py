@@ -78,7 +78,9 @@ settings = {
 
 # Callbacks to test reward conditions
 def __cond_action_up(world):
-    return world.buttons['up'] == 1
+    # Detect other keys
+    held_buttons = {k:v for k,v in world.buttons.iteritems() if v == 1}
+    return len(held_buttons) == 1 and world.buttons['up'] == 1
 
 def __cond_battery_out(world):
     return world.player.stats['battery'] <= 0
