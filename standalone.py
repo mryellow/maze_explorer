@@ -36,7 +36,8 @@ def main(argv):
         cnt = 0
         while not engine.director.window.has_exit:
             engine.step()
-            #print(cnt)
+
+            print(cnt, engine.world_layer.get_state())
             cnt += 1
     else:
         engine.run()

@@ -332,8 +332,8 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
             rad = a + sensor.angle
             dis = min(self.distance_to_tile(pos, rad), sensor.max_range)
 
-            # Keep state of sensed range
-            sensor.proximity = dis
+            # Keep state of sensed range, `dis` is from center
+            sensor.proximity = dis - self.player.radius
 
             # Check for collisions with items
             # List of items within sensor range, do for each sensor's range
@@ -353,7 +353,7 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
                     other_rad = other_rad % (math.pi*2)
                     round_rad = rad % (math.pi*2)
                     if abs(other_rad - round_rad) < (sensor.fov/2):
-                        sensor.proximity = other_dis
+                        sensor.proximity = other_dis - self.player.radius
                         sensor.sensed_type = other.btype
                         dis = other_dis
 
