@@ -165,8 +165,15 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
             eu.Vector2(padding.x, ((tiles_h+1)*self.map_layer.th)-padding.y), # Top right
             eu.Vector2(((tiles_w+1)*self.map_layer.tw)-padding.x, ((tiles_h+1)*self.map_layer.th)-padding.y) # Top left
         ]
+        rotations = [
+            45,
+            -45,
+            135,
+            -135
+        ]
         self.spawn = corners[corner]
         self.player = Player(self.spawn.x, self.spawn.y)
+        self.player.rotation = rotations[corner]
         self.add(self.player, z=self.z)
         self.z += 1
 
