@@ -2,7 +2,7 @@ from setuptools import setup
 from setuptools import find_packages
 
 setup(name='mazeexp',
-    version='0.0.4',
+    version='0.0.5',
     author='Mr-Yellow',
     author_email='mr-yellow@mr-yellow.com',
     description='A maze exploration game engine',
