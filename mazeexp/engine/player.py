@@ -111,11 +111,12 @@ class Player(Collidable):
         if mv != 0:
             self.stats['battery'] -= self.battery_use['linear']
             newVel += dt * mv * self.accel * self.impulse_dir
-            nv = newVel.magnitude()
-            if nv > self.top_speed:
-                newVel *= self.top_speed / nv
         else:
             newVel += dt * self.deaccel * -newVel
+
+        nv = newVel.magnitude()
+        if nv > self.top_speed:
+            newVel *= self.top_speed / nv
 
         # Position collision rects
         oldRect = self.get_rect()

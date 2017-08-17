@@ -2,6 +2,7 @@
 /build
 /dist
 /logs
+/logs_async
 *.pyc
 .idea
 .directory

@@ -94,9 +94,13 @@ def __cond_goal_battery(world):
 modes = [
     # Mode 0
     {
-        "proximity": {
-            "cond": __cond_action_up,
-            "reward": 1.1 # 10% Bonus on proximity reward
+        #"proximity": {
+        #    "cond": __cond_action_up,
+        #    "reward": 1.1 # 10% Bonus on proximity reward
+        #},
+        "wall": {
+            "reward": -10.0,
+            "terminal": False
         },
         "items": {
             "food": {

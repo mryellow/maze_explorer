@@ -100,9 +100,11 @@ class WorldRewards(object):
                 reward += 1
 
         reward /= len(self.player.sensors)
-        reward = min(1.0, reward * 2)
+        #reward = min(1.0, reward * 2)
+        reward = min(1.0, reward * reward)
         # TODO: Configurable bonus reward threshold. Pass extra args to `__test_cond`?
-        if mode and mode and reward > 0.75 and self.__test_cond(mode):
+        #if mode and mode and reward > 0.75 and self.__test_cond(mode):
+        if mode and mode and self.__test_cond(mode):
             # Apply bonus
             reward *= mode['reward']
 
