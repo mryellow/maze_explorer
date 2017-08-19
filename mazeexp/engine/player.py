@@ -118,7 +118,7 @@ class Player(Collidable):
 
 
         nv = newVel.magnitude()
-        if nv < self.deaccel:
+        if mv == 0 and nv < self.deaccel:
             newVel *= 0
         if nv > self.top_speed:
             newVel *= self.top_speed / nv

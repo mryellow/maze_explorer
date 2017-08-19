@@ -100,7 +100,7 @@ modes = [
         #},
         "wall": {
             "reward": -10.0,
-            "terminal": True
+            "terminal": False
         },
         "items": {
             "food": {
