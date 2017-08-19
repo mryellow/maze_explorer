@@ -27,7 +27,7 @@ settings = {
     "player": {
         "radius": tiles['tw'] / 4,
         # TODO: Put all velocity settings in dict
-        "top_speed": 50.0 / 4,
+        "top_speed": 10.0,
         "angular_velocity": 240.0 / 4,  # degrees / s
         "accel": 5.0,
         "deaccel": 25.0,
@@ -100,7 +100,7 @@ modes = [
         #},
         "wall": {
             "reward": -10.0,
-            "terminal": False
+            "terminal": True
         },
         "items": {
             "food": {
