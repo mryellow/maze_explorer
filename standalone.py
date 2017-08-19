@@ -30,6 +30,25 @@ def main(argv):
             observation, reward, terminal, info = engine.act(action)
             #print(observation)
             print(action, [min(observation),max(observation)], reward, terminal)
+    elif '-t' in argv or '--test' in argv:
+        print('Dupicate deaccel bug agent...')
+
+        engine.reset()
+
+        cnt = 0
+        while not engine.director.window.has_exit:
+            action = 2
+            if cnt % 4 == 0:
+                switch = randint(0, 1)
+                if switch == 0:
+                    action = 0
+                else:
+                    action = 4
+
+            observation, reward, terminal, info = engine.act(action)
+            #print(observation)
+            print(action, [min(observation),max(observation)], reward, terminal)
+            cnt += 1
     elif '-s' in argv or '--step' in argv:
         print('Step by step...')
         engine.reset()

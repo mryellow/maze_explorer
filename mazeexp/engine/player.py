@@ -111,10 +111,15 @@ class Player(Collidable):
         if mv != 0:
             self.stats['battery'] -= self.battery_use['linear']
             newVel += dt * mv * self.accel * self.impulse_dir
+            #print('up')
         else:
-            newVel += dt * self.deaccel * -newVel
+            newVel += dt * self.deaccel * -self.impulse_dir
+            #print('dn')
+
 
         nv = newVel.magnitude()
+        if nv < self.deaccel:
+            newVel *= 0
         if nv > self.top_speed:
             newVel *= self.top_speed / nv
 

@@ -29,8 +29,8 @@ settings = {
         # TODO: Put all velocity settings in dict
         "top_speed": 50.0 / 4,
         "angular_velocity": 240.0 / 4,  # degrees / s
-        "accel": 85.0,
-        "deaccel": 5.0,
+        "accel": 5.0,
+        "deaccel": 25.0,
         # TODO: Refactor to action `costs`, will apply to whichever `stat`
         "battery_use": {
             "angular": 0.01,
@@ -100,7 +100,7 @@ modes = [
         #},
         "wall": {
             "reward": -10.0,
-            "terminal": False
+            "terminal": True
         },
         "items": {
             "food": {
