@@ -30,7 +30,7 @@ settings = {
         "top_speed": 10.0,
         "angular_velocity": 240.0 / 4,  # degrees / s
         "accel": 5.0,
-        "deaccel": 5.0,
+        "deaccel": 15.0,
         # TODO: Refactor to action `costs`, will apply to whichever `stat`
         "battery_use": {
             "angular": 0.01,
