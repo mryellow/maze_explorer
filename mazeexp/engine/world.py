@@ -230,21 +230,21 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
         if dt == 0:
             newVel.x, newVel.y = self.collide_map(self.map_layer, oldRect, oldRect, newVel.x, newVel.y)
 
+        # Get planned velocity result
+        def get_new_rect(pos, width, height, dt, velocity):
+            targetPos = pos + dt * velocity
+            x = targetPos.x - width/2
+            y = targetPos.y - height/2
+            return x, y
+
         while remaining_dt > 1.e-6:
             #print('remaining_dt', remaining_dt)
-
-            testPos = oldPos + remaining_dt * newVel
-
-            # Update planned velocity to avoid collisions
-            newRect.x = testPos.x - newRect.width/2
-            newRect.y = testPos.y - newRect.height/2
+            newRect.x, newRect.y = get_new_rect(oldPos, newRect.width, newRect.height, remaining_dt, newVel)
             newVel.x, newVel.y = self.collide_map(self.map_layer, oldRect, newRect, newVel.x, newVel.y)
 
             remaining_dt -= self.consumed_dt
 
-        newPos = oldPos + dt * newVel
-        newRect.x = newPos.x - newRect.width/2
-        newRect.y = newPos.y - newRect.height/2
+        newRect.x, newRect.y = get_new_rect(oldPos, newRect.width, newRect.height, dt, newVel)
 
         # Ensure player can't escape borders
         border = False
