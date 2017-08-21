@@ -6,7 +6,8 @@ import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 #
 
-from random import randint
+import time
+import random
 
 import mazeexp as mx
 
@@ -26,7 +27,7 @@ def main(argv):
         engine.reset()
 
         while not engine.director.window.has_exit:
-            action = randint(0, engine.actions_num-1)
+            action = random.randint(0, engine.actions_num-1)
             observation, reward, terminal, info = engine.act(action)
             #print(observation)
             print(action, [min(observation),max(observation)], reward, terminal)
@@ -39,24 +40,31 @@ def main(argv):
         while not engine.director.window.has_exit:
             action = 2
             if cnt % 4 == 0:
-                switch = randint(0, 1)
+                switch = random.randint(0, 1)
                 if switch == 0:
                     action = 0
                 else:
                     action = 4
 
+            # Wait random time
+            sleep = 5*random.random()
+            print('sleep', sleep)
+            time.sleep(sleep)
             observation, reward, terminal, info = engine.act(action)
             #print(observation)
-            print(action, [min(observation),max(observation)], reward, terminal)
+            #print(action, [min(observation),max(observation)], reward, terminal)
             cnt += 1
     elif '-s' in argv or '--step' in argv:
         print('Step by step...')
         engine.reset()
         cnt = 0
         while not engine.director.window.has_exit:
+            sleep = 5*random.random()
+            print('sleep', sleep)
+            time.sleep(sleep)
             engine.step()
 
-            print(cnt, engine.world_layer.get_state())
+            #print(cnt, engine.world_layer.get_state())
             cnt += 1
     else:
         engine.run()

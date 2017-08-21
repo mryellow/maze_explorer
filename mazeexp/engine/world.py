@@ -37,7 +37,7 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
     """
     is_event_handler = True
 
-    def __init__(self, mode_id=0, fn_show_message=None):
+    def __init__(self, mode_id = 0, fn_show_message=None):
         super(WorldLayer, self).__init__()
 
         self.logger = logging.getLogger(__name__)
@@ -45,6 +45,7 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
 
         self.mode_id = mode_id
         self.mode = config.modes[self.mode_id]
+        self.force_fps = config.settings['world']['force_fps']
 
         self.fn_show_message = fn_show_message
 
@@ -204,15 +205,46 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
         if self.win_status != 'undecided':
             return
 
+        # Step known time for agents
+        if self.force_fps > 0:
+            dt = 1 / self.force_fps
+
         # update target
         self.player.update_rotation(dt, self.buttons)
 
         # Get planned update
-        oldRect, newRect, newVel = self.player.do_move(dt, self.buttons)
+        newVel = self.player.do_move(dt, self.buttons)
 
-        # Update planned velocity to avoid collisions
-        # modifies `newRect` to be the nearest rect ... still outside any `map_layer` object.
-        newVel.x, newVel.y = self.collide_map(self.map_layer, oldRect, newRect, newVel.x, newVel.y)
+        # Position collision rects
+        oldRect = self.player.get_rect()
+        newRect = oldRect.copy()
+
+        oldPos = self.player.cshape.center
+        remaining_dt = dt
+        newPos = oldPos.copy()
+
+        # So WorldLayer is given `bumped` attributes at startup.
+        if dt == 0:
+            newVel.x, newVel.y = self.collide_map(self.map_layer, oldRect, oldRect, newVel.x, newVel.y)
+
+        # Time it takes to travel half a square at full speed
+        consumed_dt = self.player.top_speed / min(config.tiles['th'], config.tiles['tw']) / 2
+
+        while remaining_dt > 1.e-6:
+            #print('remaining_dt', remaining_dt)
+
+            testPos = oldPos + remaining_dt * newVel
+
+            # Update planned velocity to avoid collisions
+            newRect.x = testPos.x - newRect.width/2
+            newRect.y = testPos.y - newRect.height/2
+            newVel.x, newVel.y = self.collide_map(self.map_layer, oldRect, newRect, newVel.x, newVel.y)
+
+            remaining_dt -= consumed_dt
+
+        newPos = oldPos + dt * newVel
+        newRect.x = newPos.x - newRect.width/2
+        newRect.y = newPos.y - newRect.height/2
 
         # Ensure player can't escape borders
         border = False
@@ -236,6 +268,7 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
 
         # Collision detected
         if border or self.bumped_x or self.bumped_y:
+            #print('bumped')
             self.reward_wall()
 
         # In WorldLayer so we can access map

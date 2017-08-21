@@ -122,48 +122,4 @@ class Player(Collidable):
         if nv > self.top_speed:
             newVel *= self.top_speed / nv
 
-        # Position collision rects
-        oldRect = self.get_rect()
-        newRect = oldRect.copy()
-        newRect.x, newRect.y = self.get_destination(dt, newVel)
-
-        return oldRect, newRect, newVel
-
-    def get_destination(self, dt, velocity):
-        """
-        Apply velocity and return new position
-        """
-        assert isinstance(velocity, eu.Vector2)
-
-        oldPos = self.cshape.center
-        remaining_dt = dt
-        newPos = oldPos.copy()
-
-        while remaining_dt > 1.e-6:
-            newPos = oldPos + remaining_dt * velocity
-            consumed_dt = remaining_dt
-            # what about screen boundaries ? if colision bounce
-            #if new.x < r:
-            #    consumed_dt = (r - ppos.x) / newVel.x
-            #    new = ppos + consumed_dt * newVel
-            #    newVel = -reflection_y(newVel)
-            #if new.x > (self.width - r):
-            #    consumed_dt = (self.width - r - ppos.x) / newVel.x
-            #    new = ppos + consumed_dt * newVel
-            #    newVel = -reflection_y(newVel)
-            #if new.y < r:
-            #    consumed_dt = (r - ppos.y) / newVel.y
-            #    new = ppos + consumed_dt * newVel
-            #    newVel = reflection_y(newVel)
-            #if new.y > (self.height - r):
-            #    consumed_dt = (self.height - r - ppos.y) / newVel.y
-            #    new = ppos + consumed_dt * newVel
-            #    newVel = reflection_y(newVel)
-            remaining_dt -= consumed_dt
-
-        # Upper left corner of Rect
-        # FIXME: Use top, left
-        newPos.x -= self.cshape.r
-        newPos.y -= self.cshape.r
-
-        return newPos
+        return newVel

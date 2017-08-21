@@ -28,7 +28,7 @@ settings = {
         "radius": tiles['tw'] / 4,
         # TODO: Put all velocity settings in dict
         "top_speed": 10.0,
-        "angular_velocity": 240.0 / 4,  # degrees / s
+        "angular_velocity": 60.0,  # degrees / s
         "accel": 5.0,
         "deaccel": 15.0,
         # TODO: Refactor to action `costs`, will apply to whichever `stat`
@@ -51,6 +51,7 @@ settings = {
         ]
     },
     "world": {
+        "force_fps": 5.0, # Used by agents to step velocity updates
         "width": tiles['tw'] * tiles['width'],
         "height": tiles['th'] * tiles['height'],
         "bindings": {
