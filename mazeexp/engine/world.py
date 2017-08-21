@@ -47,6 +47,9 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
         self.mode = config.modes[self.mode_id]
         self.force_fps = config.settings['world']['force_fps']
 
+        # Time it takes to travel half a square at full speed
+        self.consumed_dt = config.settings['player']['top_speed'] / min(config.tiles['th'], config.tiles['tw']) / 2
+
         self.fn_show_message = fn_show_message
 
         self.z = 0
@@ -227,9 +230,6 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
         if dt == 0:
             newVel.x, newVel.y = self.collide_map(self.map_layer, oldRect, oldRect, newVel.x, newVel.y)
 
-        # Time it takes to travel half a square at full speed
-        consumed_dt = self.player.top_speed / min(config.tiles['th'], config.tiles['tw']) / 2
-
         while remaining_dt > 1.e-6:
             #print('remaining_dt', remaining_dt)
 
@@ -240,7 +240,7 @@ class WorldLayer(WorldItems, WorldQueries, WorldRewards, cocos.layer.Layer, mc.R
             newRect.y = testPos.y - newRect.height/2
             newVel.x, newVel.y = self.collide_map(self.map_layer, oldRect, newRect, newVel.x, newVel.y)
 
-            remaining_dt -= consumed_dt
+            remaining_dt -= self.consumed_dt
 
         newPos = oldPos + dt * newVel
         newRect.x = newPos.x - newRect.width/2
