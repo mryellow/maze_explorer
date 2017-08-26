@@ -62,8 +62,9 @@ Based on [Andrej Karpathy's Javascript environment](https://cs.stanford.edu/peop
 
 ##### Rewards
 
-* `avg(proximity) or 1` Agents don't like seeing walls, especially up close
-* `*1.1` Forward action bonus
+* ~~`avg(proximity) or 1` Agents don't like seeing walls, especially up close~~
+* ~~`*1.1` Forward action bonus~~
+* `-10` collision with wall
 * `+5` collision with apple
 * `-6` collision with poison
 
