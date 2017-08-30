@@ -2,7 +2,7 @@ from setuptools import setup
 from setuptools import find_packages
 
 setup(name='mazeexp',
-    version='0.0.9',
+    version='0.0.10',
     author='Mr-Yellow',
     author_email='mr-yellow@mr-yellow.com',
     description='A maze exploration game engine',
@@ -10,6 +10,7 @@ setup(name='mazeexp',
     url='https://github.com/mryellow/maze_explorer',
     license='MIT',
     install_requires=['cocos2d', 'pyglet'],
+    include_package_data=True,
     keywords='maze, game, maze-explorer, openaigym, openai-gym',
     classifiers=[
         # How mature is this project? Common values are
