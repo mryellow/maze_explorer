@@ -112,8 +112,8 @@ Spawn tile is no different to any other from agents perspective, must remember h
 If you use Maze Explorer in your academic research, we would be grateful if you could cite it as follows:
 
 ```
-@misc{king2017mazeexplorer,
-    author = {King},
+@misc{mryellow2017mazeexplorer,
+    author = {Mr-Yellow},
     title = {Maze Explorer: A maze exploration game for AI agents},
     howpublished={Web page},
     url = {https://github.com/mryellow/maze_explorer},
